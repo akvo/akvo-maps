@@ -34,7 +34,7 @@ MapController.prototype.register = function(app) {
     app.get(app.base_url_mapconfig + '/:token/:z/:x/:y.:format', this.tile.bind(this));
     app.get(app.base_url_mapconfig + '/:token/:layer/:z/:x/:y.(:format)', this.layer.bind(this));
     app.options(app.base_url_mapconfig, this.cors.bind(this));
-    app.get(app.base_url_mapconfig, this.createGet.bind(this));
+    //app.get(app.base_url_mapconfig, this.createGet.bind(this));
     app.post(app.base_url_mapconfig, this.createPost.bind(this));
     app.get(app.base_url_mapconfig + '/:token/:layer/attributes/:fid', this.attributes.bind(this));
 };
