@@ -8,54 +8,94 @@ Sandro Santilli &lt;strk@kbt.io&gt;
 
 ## What we have
 
- - A bunch of Docker images (`images/`)
+--
+
+ - A public git repository https://github.com/akvo/akvo-maps/ consisting of:
+
+--
+
+ - A bunch of [Docker](https://www.docker.com/) images (`images/`)
 
 --
 
  - A set of Makefiles to build all images and run the system  (`*/Makefile`)
 
+???
+
+I guess I could have used docker-compose
+
 --
 
  - An example service client (`viewer/`)
 
+--
+
+ - Docs and utility scripts
+
+--
+
+ - GNU GPLv3 license
+
 ---
 
 ## What we have
-### Docker images
+### Docker images for:
 
- - Database (`akvo-postgis`)
-
---
-
- - Key-value store (`akvo-redis`)
-
---
-
- - Tiler (`akvo-tiler`)
-
---
-
- - Authentication layer (`akvo-nginx-secured`) 
-
---
-
- - Shared clients cache (`akvo-varnish`)
- 
 ???
 
-All but "nginx" based on a "base" image images/base/Dockerfile
+All images except "nginx" are based on a "base" image
+`images/base/Dockerfile` which is based on Ubuntu 16.04
 
+--
+
+
+ - Database (`images/postgis`)
+
+--
+
+ - Key-value store (`images/redis`)
+
+--
+
+ - Tiler (`images/tiler`)
+
+--
+
+ - Authentication layer (`images/nginx-secured`)
+
+--
+
+ - Shared clients cache (`images/varnish`)
+ 
 ---
 
 ## What we have - Docker images
 ### Database (`akvo-postgis`)
 
 - `images/postgis/Dockerfile`
-- PostgreSQL server (9.5)
+
+--
+- [PostgreSQL](https://www.postgresql.org/) server (9.5)
+
+--
 - [PostGIS](http://postgis.net) extension (2.2)
-- Example spatial database with preloaded data (Liberia points)
+
+--
+- Example spatial database (akvo)
+
+--
+- Preloaded data (Liberia points)
+
+--
 
 .center[![PostGISLogo](https://upload.wikimedia.org/wikipedia/en/6/60/PostGIS_logo.png)]
+
+???
+
+In a real deploy you might have multiple databases, as long as you
+spatially-enable each one. With some tiler-server tweaks you could
+also have multiple database *servers* (for example to improve
+availability or speed with a replicated environment).
 
 ---
 
@@ -63,10 +103,22 @@ All but "nginx" based on a "base" image images/base/Dockerfile
 ### Key-value store (`akvo-redis`)
 
 - `images/redis/Dockerfile`
+
+--
 - [Redis](https://redis.io/) server (3.0)
+
+--
 - Used by the Tiler to store map configurations
 
+--
+
 .center[![RedisLogo](https://chrysohous.files.wordpress.com/2012/08/redis.png)]
+
+???
+
+If you need to scale up tilers you can use this shared cache to give
+all tilers a central fast key-value store to lookup map configurations,
+no matter which tiler got to process the initial map creation request.
 
 ---
 
@@ -74,17 +126,43 @@ All but "nginx" based on a "base" image images/base/Dockerfile
 ### Tiler (`akvo-tiler`)
 
 - `images/tiler/Dockerfile`
-- Based on [Windhsaft](https://github.com/CartoDB/Windshaft)
-- Custom fork for SRID patch
-- Configurable API endpoints
 
-.center[![SampleTile](https://raw.githubusercontent.com/CartoDB/Windshaft/master/examples/images/screen_3.png)]
+--
+- [Windshaft](https://github.com/CartoDB/Windshaft) based HTTP Tiler API
 
 ???
 
+Windshaft is a CartoDB component, BSD licensed.
 - Uses Mapnik renderer to create tiles from PostGIS data (both vector and raster)
 - Can also serve record attributes directly querying PostgreSQL
 - Only state is the map configuration (in redis), expiring when unused
+
+--
+- Uses Windshaft fork for [SRID patch](https://github.com/CartoDB/Windshaft/pull/529)
+
+???
+
+Needed to not enforce a specific SRS to the data
+
+--
+- Configurable API endpoints
+
+???
+
+To let you more easily plug filter layers
+
+--
+- Data update handling for cache management
+
+???
+
+Allows encoding time of last data modification (as found in an `updated_at`
+record field, if any) into the token used to fetch tiles/attributes.
+
+--
+
+.center[![SampleTile](https://raw.githubusercontent.com/CartoDB/Windshaft/master/examples/images/screen_3.png)]
+
 
 ---
 
@@ -92,9 +170,17 @@ All but "nginx" based on a "base" image images/base/Dockerfile
 ### Authentication layer (`akvo-nginx-secured`)
 
 - `images/nginx-secured/Dockerfile`
+
+--
 - Based on [OpenResty](https://openresty.org) (NGINX + LUA)
+
+--
 - JWT verification to allow POSTs (used to create maps)
+
+--
 - Proxies to underlying tiler
+
+--
 
 .center[![OpenResty Logo](http://openresty.org/images/logo.png)]
 
@@ -103,10 +189,15 @@ All but "nginx" based on a "base" image images/base/Dockerfile
 ## What we have - Docker images
 ### Shared clients cache (`akvo-varnish`)
 
-
 - `images/varnish/Dockerfile`
+
+--
 - [Varnish](https://www.varnish-cache.org) HTTP cache (4.1)
+
+--
 - Never-invalidated cache for tile users
+
+--
 
 .center[![Varnish Logo](https://www.varnish-cache.org/_static/varnish-bunny.png)]
 
@@ -205,6 +296,10 @@ Schema of running system (how it should probably be):
           ↓                                 ⇅
      [ postgis ]                       (( viewer ))
 ```
+
+???
+
+Content Delivery Network could be used for tiles fetching.
 
 ---
 
@@ -305,3 +400,114 @@ Schema of running system (how it should probably be):
 
 .center[![Viewer output](http://strk.kbt.io/tmp/mapview.png)]
 
+---
+
+# More on the tiler
+
+## State
+
+--
+
+- Holds no permanent state
+--
+
+- Expiration times are configurable
+
+--
+- Caches are kept-alive by usage
+
+---
+
+# More on the tiler
+
+## Cache: Map Store
+
+- Full MapConfig by id (hash) stored in Redis
+--
+
+    - Kept alive by serving map tiles or attributes
+--
+    - Kept alive by requesting the same MapConfig again
+--
+    - Configurable expiration time
+```
+    // server/http/server.js:78
+    var map_store  = new windshaft.storage.MapStore({
+        ...
+        expire_time: opts.grainstore.default_layergroup_ttl
+    });
+```
+
+---
+
+# More on the tiler
+
+## Cache: Renderer
+
+- Initialized renderer and associated "meta-tiles" in tiler memory
+--
+
+    - Kept alive by serving map tiles or attributes for the specific map
+--
+    - Reset by detected data update (`cache_buster`)
+--
+    - Kept alive by requesting the same MapConfig again
+--
+    - Configurable expiration time
+```
+    // server/http/server.js:96
+    var rendererCacheOpts = {
+        ttl: 60000 // 60 seconds
+    };
+    var rendererCache = new windshaft.cache.RendererCache(
+      rendererFactory, rendererCacheOpts);
+```
+
+???
+
+This is a proof of concept implementation so configuration of these
+parameters are not straightforward. But it's possible to clean that
+part up by using the `global.environment` object, which contains
+what's being found in `config/environment/development.js`
+
+---
+
+# More on the tiler
+
+## API
+
+--
+- https://github.com/CartoDB/Windshaft/blob/master/doc/Multilayer-API.md
+
+--
+- Client sends MapConfig and obtains a MapToken
+
+--
+- Client uses MapToken to request further resources:
+
+--
+    - PNG tiles (with PostGIS Geometry or Raster inputs)
+--
+    - UTF8 grids (for mouse over event handling, receiving feature id)
+--
+    - Torque tiles
+--
+    - Attributes (by feature id)
+--
+- Data changed events are expected to be checked by clients
+  (for example by polling)
+
+???
+
+An additional API could be exposed by the server to do just data-update
+checking (and keeping the caches alive at the same time).
+
+---
+
+# ~ The End ~
+
+## Questions welcome
+
+### And issues:
+
+#### https://github.com/akvo/akvo-maps/issues
