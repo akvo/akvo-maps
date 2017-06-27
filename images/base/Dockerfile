@@ -2,7 +2,9 @@
 
 FROM ubuntu:xenial
 
-RUN apt-get update && apt-get install -y vim locales
+RUN apt-get update && \
+    apt-get install -yq \
+    vim locales
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8

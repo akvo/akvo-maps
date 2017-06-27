@@ -6,6 +6,7 @@ start:
 	docker run --name akvo-tiler \
     --link akvo-postgis \
     --link akvo-redis \
+    -p 4000:4000 \
     $$AKVO_DOCKER_WINDSHAFT_OPTIONS \
     -d \
     akvo-tiler

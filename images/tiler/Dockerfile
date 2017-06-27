@@ -2,7 +2,8 @@ FROM akvo-base
 
 # Install required packages
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && \
+  apt-get install -yq \
   build-essential \
   curl \
   git \
@@ -48,6 +49,8 @@ ENV DEBUG windshaft*
 ENV PGHOST akvo-postgis
 ENV PGUSER akvo
 ENV PGPASSWORD akvo
+
+EXPOSE 4000
 
 # Start server
 CMD cd /tiler && while :; do node server.js; sleep 10; done
