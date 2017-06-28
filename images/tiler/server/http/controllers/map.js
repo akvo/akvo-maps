@@ -2,7 +2,7 @@ const util = require('util')
 var assert = require('assert');
 var step = require('step');
 var windshaft = require('windshaft/lib/windshaft');
-var PSQL = require('windshaft/node_modules/cartodb-psql'); // dependency of windshaft
+var PSQL = require('cartodb-psql'); // dependency of windshaft
 var _ = require('underscore');
 
 var MapConfig = windshaft.model.MapConfig;

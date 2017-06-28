@@ -1,7 +1,7 @@
 FROM akvo-base
 
 RUN apt-get update && apt-get -y install \
-  postgresql-9.5-postgis-2.2 curl && apt-get clean
+  postgis curl gdal-bin && apt-get clean
 
 EXPOSE 5432
 
@@ -11,12 +11,12 @@ RUN echo "listen_addresses = '*'" >> /etc/postgresql/9.5/main/postgresql.conf
 
 RUN service postgresql start && \
     # Create a template_gis database \
-    echo "create database template_gis;" | su postgres -c psql && \
-    echo "create extension postgis;" | PGDATABASE=template_gis su postgres -c psql && \
+    echo "CREATE DATABASE template_gis TEMPLATE template0 ENCODING UTF8;" | su postgres -c psql && \
+    echo "CREATE EXTENSION postgis;" | PGDATABASE=template_gis su postgres -c psql && \
     # Create an akvo user \
-    echo "create user akvo with password 'akvo';" | su postgres -c psql && \
+    echo "CREATE USER akvo WITH PASSWORD 'akvo';" | su postgres -c psql && \
     # Create an akvo database owned by akvo \
-    echo "create database akvo template template_gis owner 'akvo';" | su postgres -c psql
+    echo "CREATE DATABASE akvo TEMPLATE template_gis OWNER 'akvo';" | su postgres -c psql
 
 # Set default access parameters
 ENV PGUSER akvo

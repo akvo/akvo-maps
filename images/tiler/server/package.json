@@ -10,15 +10,14 @@
     },
     "author": "Sandro Santilli <strk@kbt.io>",
     "dependencies": {
-        "windshaft": "strk/windshaft#akvo-2.7.0-1",
+        "windshaft": "3.2.1",
         "express": "~4.13.3",
         "morgan": "~1.7.0",
         "body-parser": "~1.14.0",
         "debug": "~2.2.0",
-        "mapnik": "https://s3.amazonaws.com/cartodb-node-binary/mapnik/v1.4.15-cdb10/1.4.15-cdb10.tgz",
-        "redis-mpool": "~0.4.0",
+        "redis-mpool": "0.4.1",
         "step": "~0.0.6",
         "underscore": "~1.6.0"
     },
-    "engine": { "node": ">= 0.10 < 0.11" }
+    "engine": { "node": ">=6.9" }
 }
