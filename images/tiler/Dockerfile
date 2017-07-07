@@ -51,6 +51,9 @@ ENV PGUSER akvo
 ENV PGPASSWORD akvo
 
 EXPOSE 4000
+EXPOSE 9222
+
+WORKDIR /tiler
 
 # Start server
-CMD cd /tiler && while :; do node server.js; sleep 10; done
+CMD ["node", "--inspect=9222", "server.js"]
