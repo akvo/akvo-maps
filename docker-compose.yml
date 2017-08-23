@@ -1,0 +1,26 @@
+version: "3"
+services:
+ postgres:
+   build: postgres
+   ports:
+    - "5432:5432"
+ redis:
+   image: redis:3.2.9
+ windshaft:
+   build:
+     context: ./windshaft
+     dockerfile: Dockerfile-dev
+   environment:
+     - NODE_HEAPDUMP_OPTIONS=nosignal
+   volumes:
+      - ./windshaft/server:/tiler
+      - ./windshaft/config/dev:/config
+   ports:
+      - "9229:9229"
+      - "4000:4000"
+# statsd-server:
+#    image: hopsoft/graphite-statsd
+#    expose:
+#          - "8125"
+#    ports:
+#       - 8550:80
