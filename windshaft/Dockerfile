@@ -1,21 +1,12 @@
 FROM ubuntu:xenial-20170802
 
-RUN apt-get update && \
-    apt-get install -yq \
-    vim locales
-
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-
 # Install required packages
 
 RUN apt-get update && \
   apt-get install -yq \
+  locales \
   build-essential \
   curl \
-  git \
   libmapnik-dev \
   pkg-config \
   python-dev \
@@ -24,6 +15,12 @@ RUN apt-get update && \
   libpango1.0-dev \
   libgif-dev \
   g++
+
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 6.11.1
@@ -42,19 +39,12 @@ ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN node --version
 RUN npm --version
 
-# Build server
-
-ADD server /tiler
-RUN cd /tiler && rm -rf node_modules* && npm install
-
-# Add config
-
-ADD config /config
+RUN npm install nodemon -g
 
 # Debugging mode on
-ENV NODE_ENV production
+ENV NODE_ENV development
 
 EXPOSE 4000
 
 # Start server
-CMD cd /tiler && node server.js
+CMD cd /tiler && make && nodemon --inspect ./server.js
