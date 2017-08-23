@@ -1,6 +1,7 @@
 FROM ubuntu:xenial-20170802
 
-RUN apt-get install -yq \
+RUN apt-get update && \
+    apt-get install -yq \
     vim locales
 
 RUN locale-gen en_US.UTF-8
@@ -10,7 +11,8 @@ ENV LC_ALL en_US.UTF-8
 
 # Install required packages
 
-RUN apt-get install -yq \
+RUN apt-get update && \
+  apt-get install -yq \
   build-essential \
   curl \
   git \
