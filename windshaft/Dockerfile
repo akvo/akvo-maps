@@ -1,7 +1,6 @@
-FROM ubuntu:xenial
+FROM ubuntu:xenial-20170802
 
-RUN apt-get update && \
-    apt-get install -yq \
+RUN apt-get install -yq \
     vim locales
 
 RUN locale-gen en_US.UTF-8
@@ -11,8 +10,7 @@ ENV LC_ALL en_US.UTF-8
 
 # Install required packages
 
-RUN apt-get update && \
-  apt-get install -yq \
+RUN apt-get install -yq \
   build-essential \
   curl \
   git \
@@ -45,7 +43,7 @@ RUN npm --version
 # Build server
 
 ADD server /tiler
-RUN cd /tiler && rm -rf node_modules* && make
+RUN cd /tiler && rm -rf node_modules* && npm install
 
 # Add config
 
