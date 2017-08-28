@@ -74,11 +74,6 @@ var config = {
     renderCache: global.environment.renderCache,
     req2params: function(req, callback){
 
-        // this is in case you want to test sql parameters eg ...png?sql=select * from my_table limit 10
-        req.params =  _.extend({}, req.params);
-
-        _.extend(req.params, req.query);
-
         if ( req.params.token )
         {
           // Separate cache buster from token
