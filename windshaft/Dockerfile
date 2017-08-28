@@ -41,10 +41,16 @@ RUN npm --version
 
 RUN npm install nodemon -g
 
-# Debugging mode on
-ENV NODE_ENV development
-
 EXPOSE 4000
+ENV NODE_ENV production
 
-# Start server
-CMD cd /tiler && make && nodemon --inspect ./server.js
+#RUN useradd --user-group --create-home --shell /bin/false app
+#ENV HOME=/home/app
+#USER app
+#WORKDIR $HOME/tiler
+
+COPY server/package.json server/npm-shrinkwrap.json /tiler/
+RUN npm install
+
+COPY server /tiler
+CMD cd /tiler && chmod u+x ./run.sh && ./run.sh

@@ -9,12 +9,14 @@ services:
  windshaft:
    build:
      context: ./windshaft
-     dockerfile: Dockerfile-dev
+     dockerfile: Dockerfile
    environment:
      - NODE_HEAPDUMP_OPTIONS=nosignal
+     - NODE_ENV=development
    volumes:
       - ./windshaft/server:/tiler
       - ./windshaft/config/dev:/config
+      - /tiler/node_modules
    ports:
       - "9229:9229"
       - "4000:4000"
