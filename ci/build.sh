@@ -16,5 +16,10 @@ cd ..
 docker-compose -f docker-compose-ci.yml up -d
 docker-compose -f docker-compose-ci.yml run tests lein test
 rc=$?
+
+if [ $rc != 0 ]; then
+    docker-compose -f docker-compose-ci.yml logs
+fi
+
 docker-compose -f docker-compose-ci.yml down
 exit $rc
