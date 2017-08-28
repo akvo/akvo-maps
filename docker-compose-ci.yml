@@ -5,7 +5,7 @@ services:
  redis:
    image: redis:3.2.9
  windshaft:
-   image: ${IMAGE_NAME}
+   image: akvo/akvo-maps
    volumes:
       - ./windshaft/config/dev:/config
  tests:

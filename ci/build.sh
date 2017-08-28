@@ -7,8 +7,9 @@ BRANCH_NAME="${TRAVIS_BRANCH:=unknown}"
 cd windshaft
 
 IMAGE_NAME="akvo/akvo-maps:${TRAVIS_JOB_NUMBER:=none}"
+IMAGE_NAME="akvo/akvo-maps"
 
-docker build -t "${DOCKER_IMAGE_NAME:=$IMAGE_NAME}" .
+docker build -t "${DOCKER_IMAGE_NAME:=akvo/akvo-maps}" .
 
 cd ..
 
