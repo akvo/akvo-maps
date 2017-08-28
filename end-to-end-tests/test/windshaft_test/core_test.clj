@@ -37,7 +37,7 @@
            (let [tile (http/get (str base-url "/" layer-group "/0/0/0/0.grid.json") {:as :json :connection-manager connection-pool})]
              (clojure.test/is (= 200 (:status tile))))
            (let [png (http/get (str base-url "/" layer-group "/10/483/493.png") {:connection-manager connection-pool})]
-             (clojure.test/is (= 201 (:status png))))))
+             (clojure.test/is (= 200 (:status png))))))
 
 "X-Windshaft-Cache"
 "Cache-Control"
