@@ -8,6 +8,7 @@ services:
 cache:
   directories:
     - "${HOME}/.cache"
+    - "${HOME}/.m2"
 
 before_install:
   - npm -version
