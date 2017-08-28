@@ -50,7 +50,7 @@ ENV NODE_ENV production
 #WORKDIR $HOME/tiler
 
 COPY server/package.json server/npm-shrinkwrap.json /tiler/
-RUN npm install
+RUN cd /tiler && npm install
 
 COPY server /tiler
 CMD cd /tiler && chmod u+x ./run.sh && ./run.sh

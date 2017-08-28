@@ -1,0 +1,23 @@
+version: "3"
+services:
+ postgres:
+   build: postgres
+ redis:
+   image: redis:3.2.9
+ windshaft:
+   image: ${IMAGE_NAME}
+   volumes:
+      - ./windshaft/config/dev:/config
+ tests:
+   build:
+     context: ./end-to-end-tests
+     dockerfile: Dockerfile
+   volumes:
+      - ./end-to-end-tests:/tests
+      - ~/.m2:/root/.m2
+      - ~/.lein:/root/.lein
+   depends_on:
+      - redis
+      - windshaft
+      - postgres
+   command: ["true"]

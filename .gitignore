@@ -155,3 +155,5 @@ Session.vim
 # IntelliJ IDE
 *.iml
 .idea
+/end-to-end-tests/.nrepl-port
+/end-to-end-tests/.lein-failures

@@ -20,6 +20,16 @@ services:
    ports:
       - "9229:9229"
       - "4000:4000"
+ tests:
+   build:
+     context: ./end-to-end-tests
+     dockerfile: Dockerfile
+   volumes:
+      - ./end-to-end-tests:/tests
+      - ~/.m2:/root/.m2
+      - ~/.lein:/root/.lein
+   ports:
+      - "47481:47480"
 # statsd-server:
 #    image: hopsoft/graphite-statsd
 #    expose:
