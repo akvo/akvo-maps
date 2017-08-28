@@ -17,12 +17,5 @@ docker-compose -f docker-compose-ci.yml up -d
 docker-compose -f docker-compose-ci.yml run tests lein test
 rc=$?
 
-echo "tests result $?"
-
-if [ $rc != 0 ]; then
-    echo "getting logs"
-    docker-compose -f docker-compose-ci.yml logs
-fi
-
 docker-compose -f docker-compose-ci.yml down
 exit $rc

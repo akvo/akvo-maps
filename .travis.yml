@@ -16,5 +16,8 @@ before_install:
 script:
   - ./ci/build.sh
 
+after_failure:
+  - docker-compose -f docker-compose-ci.yml logs
+
 #after_success:
 #  - ./ci/deploy.sh
