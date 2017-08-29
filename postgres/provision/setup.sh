@@ -28,7 +28,7 @@ echo "SELECT AddGeometryColumn('liberia', 'geom', 4326, 'point', 2);" \
      | psql --set ON_ERROR_STOP=1 -d test_database
 
 echo "ALTER TABLE liberia OWNER TO anybody;" | psql -d test_database
-echo "ALTER TABLE spatial_ref_sys OWNER TO test_database;" | psql -d test_database
+echo "ALTER TABLE spatial_ref_sys OWNER TO anybody;" | psql -d test_database
 
 echo ""
 echo "----------"
