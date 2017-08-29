@@ -10,6 +10,8 @@ if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
     exit 0
 fi
 
+IMAGE_NAME="akvo/akvo-maps:${TRAVIS_COMMIT}"
+
 # Pushing images
-docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-docker push "${DOCKER_IMAGE_NAME:=akvo/akvo-maps}"
+docker login -u="${DOCKERHUB_USERNAME}" -p="${DOCKERHUB_PASSWORD}"
+docker push "${DOCKER_IMAGE_NAME:=$IMAGE_NAME}"
