@@ -7,7 +7,7 @@ services:
  redis:
    image: redis:3.2.9
  windshaft:
-   image: akvo/akvo-maps
+   image: "akvo/akvo-maps:${TRAVIS_COMMIT}"
    volumes:
       - ./windshaft/config/dev:/config
  tests:

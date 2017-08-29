@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
-set -eu
+set -e
 
 BRANCH_NAME="${TRAVIS_BRANCH:=unknown}"
 
+if [ -z "$TRAVIS_COMMIT" ]; then
+    export TRAVIS_COMMIT=local
+fi
+
 cd windshaft
 
-IMAGE_NAME="akvo/akvo-maps:${TRAVIS_JOB_NUMBER:=none}"
-IMAGE_NAME="akvo/akvo-maps"
+IMAGE_NAME="akvo/akvo-maps:${TRAVIS_COMMIT}"
 
-docker build -t "${DOCKER_IMAGE_NAME:=akvo/akvo-maps}" .
+docker build -t "${DOCKER_IMAGE_NAME:=$IMAGE_NAME}" .
 
 cd ..
 
