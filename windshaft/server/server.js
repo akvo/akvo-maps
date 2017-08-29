@@ -61,6 +61,13 @@ winston.configure({
 
 winston.debug('Using configuration', global.environment);
 
+if (process.env.NODE_ENV == 'development') {
+    process.once('SIGUSR2', function () {
+        process.kill(process.pid, 'SIGUSR2');
+        process.exit();
+      });
+}
+
 // TODO: mml-builder has a use_workers flag in line 40
 var config = {
     base_url_mapconfig: '/:dbname/layergroup',
