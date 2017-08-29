@@ -2,11 +2,6 @@ version: "3"
 services:
  postgres:
    build: postgres
-   healthcheck:
-     test: echo "select * from spatial_ref_sys LIMIT 1;" | psql -d test_database -U adnybody
-     interval: 10s
-     timeout: 10s
-     retries: 5
  redis:
    image: redis:3.2.9
  windshaft:
@@ -24,6 +19,5 @@ services:
    depends_on:
       - redis
       - windshaft
-      - postgres:
-          condition: service_healthy
+      - postgres
    command: ["true"]

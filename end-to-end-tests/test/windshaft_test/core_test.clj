@@ -4,7 +4,21 @@
             clojure.stacktrace
             clojure.string
             [cheshire.core :as json]
-            [clojure.test :refer [deftest]]))
+            [clojure.test :refer [deftest] :as test]
+            [clojure.java.jdbc :as jdbc]
+            [again.core :as again]))
+
+(defn check-db-is-up [f]
+  (again/with-retries
+    (again/max-duration 60000 (again/constant-strategy 1000))
+    (if (not= 1 (count (jdbc/with-db-connection
+                         [conn {:connection-uri "jdbc:postgresql://postgres/test_database?user=anybody&password=password"}]
+                         (jdbc/query conn
+                                     ["select * from spatial_ref_sys LIMIT 2;"]))))
+      (throw (RuntimeException. "Postgres not ready"))))
+  (f))
+
+(test/use-fixtures :once check-db-is-up)
 
 (def connection-pool (clj-http.conn-mgr/make-reusable-conn-manager {:timeout 20 :threads 8 :default-per-route 8}))
 
