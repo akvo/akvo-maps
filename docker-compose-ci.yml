@@ -10,6 +10,10 @@ services:
    image: "akvo/akvo-maps:${TRAVIS_COMMIT}"
    volumes:
       - ./windshaft/config/dev:/config
+ windshaft2:
+   image: "akvo/akvo-maps:${TRAVIS_COMMIT}"
+   volumes:
+      - ./windshaft/config/dev:/config
  tests:
    build:
      context: ./end-to-end-tests

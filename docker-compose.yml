@@ -20,6 +20,16 @@ services:
    ports:
       - "9229:9229"
       - "4000:4000"
+ windshaft2:
+   build:
+     context: ./windshaft
+     dockerfile: Dockerfile
+   environment:
+     - NODE_ENV=development
+   volumes:
+      - ./windshaft/server:/tiler
+      - ./windshaft/config/dev:/config
+      - /tiler/node_modules
  tests:
    build:
      context: ./end-to-end-tests
