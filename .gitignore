@@ -157,3 +157,4 @@ Session.vim
 .idea
 /end-to-end-tests/.nrepl-port
 /end-to-end-tests/.lein-failures
+/end-to-end-tests/target/

@@ -10,7 +10,7 @@ module.exports.redis = {
 //    host: no sensible default,
     port: 6379,
 //    max: no sensible default,
-    log: false, // should be false in prod
+    log: false,
     idleTimeoutMillis: 60000,
     returnToHead: true,
     reapIntervalMillis: 10000,
@@ -69,7 +69,8 @@ module.exports.renderer = {
 };
 module.exports.mapnik_version = undefined; // will be looked up at runtime if undefined
 module.exports.enable_cors = false;
-//module.exports.statsd = { // setup to enable statsd
+// Optional: setup statsd. If not set, nothing will be monitored.
+//module.exports.statsd = {
 //        host: no sensible default,
 //        port: 8125,
 //        prefix: 'dev.'+ require("os").hostname() + ".",

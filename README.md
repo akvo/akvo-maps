@@ -1,22 +1,65 @@
 # akvo-maps
-Akvo Maps service
+Akvo Maps provide a Docker image of [Windshaft](https://github.com/CartoDB/Windshaft) based server.
 
-# docker
+## Usage
 
-This repository contains 3 docker images:
+### Run
 
-- postgis, with a running PostgreSQL and a preloaded "akvo" database
-- redis, with a running redis service
-- tiler, with a running windshaft based server
+The latest docker image can be found at https://hub.docker.com/r/akvo/akvo-maps/ 
 
-# testing
+The image expects to find the configuration file at /config/environment.js. 
+The provided configuration file will be merged with [the default configuration](windshaft/server/default-config.js)
 
-You can build all images with a "make build" call from top-level dir.
-Following that, you can start the system with "make start", and
-instructions will be given in the output of the start command as
-for how to test the server.
+The default configuration does not provides defaults for everything. You will need to provide some values. 
+See [an configuraton file example](windshaft/config/dev/environment.js)
 
-More information can be found in subdirectories.
+Some of the configuration is just passed to Windshaft. 
+See the renderer section on [this example](https://github.com/CartoDB/Windshaft-cartodb/blob/master/config/environments/production.js.example#L100) 
+for some documentation.
 
-Windshaft API documentation can be found on
-https://github.com/CartoDB/Windshaft/blob/master/doc/Multilayer-API.md
+#### Redis
+
+Windshaft uses Redis to store the queries, so a Redis DB must be made available and the configuration must point to it.
+
+### API
+
+See [Windshaft API docs](https://github.com/CartoDB/Windshaft/blob/master/doc/Multilayer-API.md)
+
+Additionally, to create the layergroup, you need to provide the following headers:
+
+1. X-DB-HOST: Postgres DB host.
+1. X-DB-USER: Postgres DB user.
+1. X-DB-PASSWORD: Postgres DB password.
+1. X-DB-PORT: Postgres DB port.
+1. X-DB-LAST-UPDATE. See [caching docs](docs/caching.md)
+
+### Javascript client example
+
+See [an example](viewer/index.html) that uses [Leaflet](http://leafletjs.com).
+
+## Development
+
+Run:
+
+```sh
+docker-compose up 
+```
+
+This will create an environment with:
+
+- two instances of windshaft, that will be restarted whenever there is a change in the "windshaft" folder
+- postgres, with a running PostgreSQL + PostGis and a preloaded "test_database" database
+- redis
+- tests, with a Clojure REPL for end to end testing.
+
+See the docker-compose.yml file for the enabled ports.
+
+Once docker has started, you can use [the viewer](viewer/index.html) to play around with it.
+
+### Running tests
+
+Connect to the Clojure REPL and run them from there or run:
+
+```sh
+docker-compose run tests lein test
+```

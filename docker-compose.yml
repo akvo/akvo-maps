@@ -18,7 +18,9 @@ services:
       - ./windshaft/config/dev:/config
       - /tiler/node_modules
    ports:
+      # debug port
       - "9229:9229"
+      # http port
       - "4000:4000"
  windshaft2:
    build:
@@ -30,6 +32,9 @@ services:
       - ./windshaft/server:/tiler
       - ./windshaft/config/dev:/config
       - /tiler/node_modules
+   ports:
+      # http port
+      - "4001:4001"
  tests:
    build:
      context: ./end-to-end-tests
@@ -39,6 +44,7 @@ services:
       - ~/.m2:/root/.m2
       - ~/.lein:/root/.lein
    ports:
+      # REPL
       - "47481:47480"
 # statsd-server:
 #    image: hopsoft/graphite-statsd
