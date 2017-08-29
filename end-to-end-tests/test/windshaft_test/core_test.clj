@@ -14,7 +14,7 @@
     (if (not= 1 (count (jdbc/with-db-connection
                          [conn {:connection-uri "jdbc:postgresql://postgres/test_database?user=anybody&password=password"}]
                          (jdbc/query conn
-                                     ["select * from spatial_ref_sys LIMIT 2;"]))))
+                                     ["select * from spatial_ref_sys LIMIT 1;"]))))
       (throw (RuntimeException. "Postgres not ready"))))
   (f))
 
