@@ -33,3 +33,10 @@ echo "ALTER TABLE spatial_ref_sys OWNER TO anybody;" | psql -d test_database
 echo ""
 echo "----------"
 echo "Done!!"
+
+cp pg.conf /var/lib/postgresql/data/postgresql.conf
+cp pg_hba.conf /var/lib/postgresql/data/pg_hba.conf
+cp server.crt /var/lib/postgresql/data/
+cp server.key /var/lib/postgresql/data/
+
+chmod 0600 /var/lib/postgresql/data/server.key
