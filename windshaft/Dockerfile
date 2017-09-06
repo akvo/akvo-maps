@@ -44,6 +44,8 @@ RUN npm install nodemon -g
 
 EXPOSE 4000
 ENV NODE_ENV production
+ENV PGSSLMODE verify-full
+ENV PGSSLROOTCERT /etc/ssl/certs/ca-certificates.crt
 
 #RUN useradd --user-group --create-home --shell /bin/false app
 #ENV HOME=/home/app

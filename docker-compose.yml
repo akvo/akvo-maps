@@ -15,12 +15,12 @@ services:
    environment:
      - NODE_HEAPDUMP_OPTIONS=nosignal
      - NODE_ENV=development
-     - PGSSLMODE=verify-full
-     - PGSSLROOTCERT=/etc/ssl/certs/ca-certificates.crt
+     - PGSSLROOTCERT=/pg-certs/server.crt
    volumes:
       - ./windshaft/server:/tiler
       - ./windshaft/config/dev:/config
       - /tiler/node_modules
+      - ./postgres/provision:/pg-certs
    ports:
       # debug port
       - "9229:9229"
@@ -32,12 +32,12 @@ services:
      dockerfile: Dockerfile
    environment:
      - NODE_ENV=development
-     - PGSSLMODE=verify-full
-     - PGSSLROOTCERT=/etc/ssl/certs/ca-certificates.crt
+     - PGSSLROOTCERT=/pg-certs/server.crt
    volumes:
       - ./windshaft/server:/tiler
       - ./windshaft/config/dev:/config
       - /tiler/node_modules
+      - ./postgres/provision:/pg-certs
    ports:
       # http port
       - "4001:4001"
