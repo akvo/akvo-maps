@@ -1,0 +1,74 @@
+FROM ubuntu:artful
+
+# Install required packages
+
+RUN apt-get update && \
+  apt-get install -yq \
+  locales \
+  build-essential \
+  git \
+  curl \
+  libmapnik-dev \
+  pkg-config \
+  python-dev \
+  libcairo2-dev \
+  libjpeg-dev \
+  libpango1.0-dev \
+  clang \
+  libgif-dev \
+  g++
+
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 6.11.1
+
+RUN curl -o- \
+    https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh \
+    | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+RUN node --version
+RUN npm --version
+
+RUN npm install nodemon -g
+
+EXPOSE 4000
+ENV NODE_ENV production
+
+#RUN useradd --user-group --create-home --shell /bin/false app
+#ENV HOME=/home/app
+#USER app
+#WORKDIR $HOME/tiler
+
+COPY server/package.json server/npm-shrinkwrap.json /tiler/
+#ENV CC=clang CXX=clang++ LINKXX=clang++ LINK=clang
+#RUN cd /tiler && npm install --build-from-source=mapnik --clang
+RUN cd /tiler && npm install
+COPY node-v48-linux-x64-Release.tar.gz /
+COPY mapnik-3.6.2-dev-249d6cc.tgz /
+RUN tar zxf node-v48-linux-x64-Release.tar.gz -C /tmp && \
+    tar zxf mapnik-3.6.2-dev-249d6cc.tgz -C /tmp && \
+    rm -rf /tiler/node_modules/mapnik/lib/* && \
+    mkdir -p /tiler/node_modules/mapnik/lib/binding/node-v48-linux-x64 && \
+    cp -rf /tmp/binding/lib /tiler/node_modules/mapnik/lib/binding/node-v48-linux-x64 && \
+    mv /tmp/binding/lib/* /tiler/node_modules/mapnik/lib/binding/node-v48-linux-x64 && \
+    mv /tmp/binding/share/* /tiler/node_modules/mapnik/lib/binding/node-v48-linux-x64 && \
+    mv /tmp/binding/mapnik.node /tiler/node_modules/mapnik/lib/binding/node-v48-linux-x64 && \
+    mv /tmp/binding/mapnik_settings.js /tiler/node_modules/mapnik/lib/binding/node-v48-linux-x64 && \
+    mv /tmp/binding/bin/* /tiler/node_modules/mapnik/lib/binding/node-v48-linux-x64 && \
+    mv /tmp/package/lib/* /tiler/node_modules/mapnik/lib/ && \
+    rm -rf /tmp/package/ /tmp/binding
+
+COPY server /tiler
+CMD cd /tiler && chmod u+x ./run.sh && ./run.sh
