@@ -12,7 +12,7 @@
   (again/with-retries
     (again/max-duration 60000 (again/constant-strategy 1000))
     (if (not= 1 (count (jdbc/with-db-connection
-                         [conn {:connection-uri "jdbc:postgresql://postgres/test_database?user=anybody&password=password"}]
+                         [conn {:connection-uri "jdbc:postgresql://postgres/test_database?user=anybody&password=password&ssl=true"}]
                          (jdbc/query conn
                                      ["select * from spatial_ref_sys LIMIT 1;"]))))
       (throw (RuntimeException. "Postgres not ready"))))
@@ -42,7 +42,7 @@
                                                           :geom_column      "geom",
                                                           :srid             4326,
                                                           :cartocss         "#s { marker-width: 5; marker-fill:#f45; marker-line-color:#813; marker-allow-overlap:true; marker-fill-opacity: 0.3;} #s[yearcons>=2009] {marker-fill: #1F78B4; marker-line-color: #0000FF;}",
-                                                          :cartocss_version "2.0.0",
+                                                          :cartocss_version "3.0.15",
                                                           :interactivity    "instance"}}]})}))
 
 (deftest happy-path
