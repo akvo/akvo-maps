@@ -16,8 +16,8 @@ docker build -t "${DOCKER_IMAGE_NAME:=$IMAGE_NAME}" .
 
 cd ..
 
-docker-compose -f docker-compose-ci.yml up -d
-docker-compose -f docker-compose-ci.yml run tests lein test
+docker-compose -f docker-compose-ci.yml up -d --build
+docker-compose -f docker-compose-ci.yml run tests /tests/import-and-run.sh test
 rc=$?
 
 docker-compose -f docker-compose-ci.yml down

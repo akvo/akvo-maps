@@ -10,10 +10,16 @@ services:
    image: "akvo/akvo-maps:${TRAVIS_COMMIT}"
    volumes:
       - ./windshaft/config/dev:/config
+      - ./postgres/provision:/pg-certs
+   environment:
+     - PGSSLROOTCERT=/pg-certs/server.crt
  windshaft2:
    image: "akvo/akvo-maps:${TRAVIS_COMMIT}"
    volumes:
       - ./windshaft/config/dev:/config
+      - ./postgres/provision:/pg-certs
+   environment:
+     - PGSSLROOTCERT=/pg-certs/server.crt
  tests:
    build:
      context: ./end-to-end-tests
@@ -22,9 +28,10 @@ services:
       - ./end-to-end-tests:/tests
       - ~/.m2:/root/.m2
       - ~/.lein:/root/.lein
+      - ./postgres/provision:/pg-certs
    depends_on:
       - redis
       - windshaft
       - windshaft2
       - postgres
-   command: ["true"]
+   command: "true"
