@@ -49,6 +49,7 @@ services:
       - ./end-to-end-tests:/tests
       - ~/.m2:/root/.m2
       - ~/.lein:/root/.lein
+      - ./postgres/provision:/pg-certs
    ports:
       # REPL
       - "47481:47480"
