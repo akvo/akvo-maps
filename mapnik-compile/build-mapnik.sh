@@ -54,6 +54,7 @@ cp binding/mapnik.node mapnik/lib/binding/
 cp binding/mapnik_settings.js mapnik/lib/binding/
 cp binding/bin/* mapnik/lib/binding/
 cp -R package/* mapnik/
+rm -rf mapnik/final
 
 #cp package.json mapnik
 tar czvf mapnik-$MAPNIK_NODE_VERSION-linux-x64.tgz mapnik
