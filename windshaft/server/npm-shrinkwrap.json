@@ -5,7 +5,29 @@
     "abaculus": {
       "version": "2.0.3-cdb1",
       "from": "cartodb/abaculus#2.0.3-cdb1",
-      "resolved": "git://github.com/cartodb/abaculus.git#f5f34e1c80cdd8d49edd1d6fe3b2220ab2e23aaf"
+      "resolved": "git://github.com/cartodb/abaculus.git#f5f34e1c80cdd8d49edd1d6fe3b2220ab2e23aaf",
+      "dependencies": {
+        "mapnik": {
+          "version": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
+          "from": "mapnik@~3.5.0",
+          "resolved": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz"
+        },
+        "mapnik-vector-tile": {
+          "version": "1.2.2",
+          "from": "mapnik-vector-tile@>=1.2.2 <1.3.0",
+          "resolved": "https://registry.npmjs.org/mapnik-vector-tile/-/mapnik-vector-tile-1.2.2.tgz"
+        },
+        "nan": {
+          "version": "2.4.0",
+          "from": "nan@>=2.4.0 <2.5.0",
+          "resolved": "https://registry.npmjs.org/nan/-/nan-2.4.0.tgz"
+        },
+        "protozero": {
+          "version": "1.4.5",
+          "from": "protozero@>=1.4.2 <1.5.0",
+          "resolved": "https://registry.npmjs.org/protozero/-/protozero-1.4.5.tgz"
+        }
+      }
     },
     "abbrev": {
       "version": "1.1.0",
@@ -1509,9 +1531,9 @@
       "resolved": "https://registry.npmjs.org/lynx/-/lynx-0.2.0.tgz"
     },
     "mapnik": {
-      "version": "3.5.14",
-      "from": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-dev-249d6cc-linux-x64.tgz",
-      "resolved": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-dev-249d6cc-linux-x64.tgz",
+      "version": "3.6.2",
+      "from": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
+      "resolved": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
       "dependencies": {
         "nan": {
           "version": "2.5.1",
@@ -3008,7 +3030,29 @@
     "tilelive-bridge": {
       "version": "2.3.1-cdb2",
       "from": "cartodb/tilelive-bridge#2.3.1-cdb2",
-      "resolved": "git://github.com/cartodb/tilelive-bridge.git#0346c634875ac87dbf8316cb81ac46d2c30fe313"
+      "resolved": "git://github.com/cartodb/tilelive-bridge.git#0346c634875ac87dbf8316cb81ac46d2c30fe313",
+      "dependencies": {
+        "mapnik": {
+          "version": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
+          "from": "mapnik@~3.5.0",
+          "resolved": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz"
+        },
+        "mapnik-vector-tile": {
+          "version": "1.2.2",
+          "from": "mapnik-vector-tile@>=1.2.2 <1.3.0",
+          "resolved": "https://registry.npmjs.org/mapnik-vector-tile/-/mapnik-vector-tile-1.2.2.tgz"
+        },
+        "nan": {
+          "version": "2.4.0",
+          "from": "nan@>=2.4.0 <2.5.0",
+          "resolved": "https://registry.npmjs.org/nan/-/nan-2.4.0.tgz"
+        },
+        "protozero": {
+          "version": "1.4.5",
+          "from": "protozero@>=1.4.2 <1.5.0",
+          "resolved": "https://registry.npmjs.org/protozero/-/protozero-1.4.5.tgz"
+        }
+      }
     },
     "tilelive-mapnik": {
       "version": "0.6.18-cdb2",
@@ -3019,6 +3063,26 @@
           "version": "2.4.6",
           "from": "generic-pool@>=2.4.0 <2.5.0",
           "resolved": "https://registry.npmjs.org/generic-pool/-/generic-pool-2.4.6.tgz"
+        },
+        "mapnik": {
+          "version": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
+          "from": "mapnik@3.5.14",
+          "resolved": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz"
+        },
+        "mapnik-vector-tile": {
+          "version": "1.2.2",
+          "from": "mapnik-vector-tile@>=1.2.2 <1.3.0",
+          "resolved": "https://registry.npmjs.org/mapnik-vector-tile/-/mapnik-vector-tile-1.2.2.tgz"
+        },
+        "nan": {
+          "version": "2.4.0",
+          "from": "nan@>=2.4.0 <2.5.0",
+          "resolved": "https://registry.npmjs.org/nan/-/nan-2.4.0.tgz"
+        },
+        "protozero": {
+          "version": "1.4.5",
+          "from": "protozero@>=1.4.2 <1.5.0",
+          "resolved": "https://registry.npmjs.org/protozero/-/protozero-1.4.5.tgz"
         }
       }
     },
@@ -3136,6 +3200,26 @@
           "version": "2.0.6",
           "from": "har-validator@>=2.0.6 <2.1.0",
           "resolved": "https://registry.npmjs.org/har-validator/-/har-validator-2.0.6.tgz"
+        },
+        "mapnik": {
+          "version": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
+          "from": "mapnik@3.5.14",
+          "resolved": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz"
+        },
+        "mapnik-vector-tile": {
+          "version": "1.2.2",
+          "from": "mapnik-vector-tile@>=1.2.2 <1.3.0",
+          "resolved": "https://registry.npmjs.org/mapnik-vector-tile/-/mapnik-vector-tile-1.2.2.tgz"
+        },
+        "nan": {
+          "version": "2.4.0",
+          "from": "nan@>=2.4.0 <2.5.0",
+          "resolved": "https://registry.npmjs.org/nan/-/nan-2.4.0.tgz"
+        },
+        "protozero": {
+          "version": "1.4.5",
+          "from": "protozero@>=1.4.2 <1.5.0",
+          "resolved": "https://registry.npmjs.org/protozero/-/protozero-1.4.5.tgz"
         },
         "qs": {
           "version": "6.3.2",
