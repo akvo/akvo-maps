@@ -67,7 +67,9 @@ module.exports.renderer = {
     }
     // TODO: provide a onTileErrorStrategy????
 };
-module.exports.mapnik_version = undefined; // will be looked up at runtime if undefined
+module.exports.grainstore = {
+    mapnik_version: "3.0.12" // will be looked up at runtime if undefined
+};
 module.exports.enable_cors = false;
 // Optional: setup statsd. If not set, nothing will be monitored.
 //module.exports.statsd = {

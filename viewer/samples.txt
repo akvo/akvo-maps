@@ -8,7 +8,7 @@
         "geom_column": "geom",
         "srid": 4326,
         "cartocss": "#s { marker-width: 5; marker-fill:#f45; marker-line-color:#813; marker-allow-overlap:true; marker-fill-opacity: 0.3;} #s[yearcons>=2009] {marker-fill: #1F78B4; marker-line-color: #0000FF;}",
-        "cartocss_version": "3.0.15",
+        "cartocss_version": "2.0.0",
         "interactivity": "instance"
       }
     }
@@ -25,7 +25,7 @@
         "geom_column": "geom",
         "srid": 4326,
         "cartocss": "#s { polygon-fill: blue; polygon-opacity: 0.8;}",
-        "cartocss_version": "3.0.15",
+        "cartocss_version": "2.0.0",
         "interactivity": "instance"
       }
     }

@@ -72,8 +72,7 @@ if (process.env.NODE_ENV == 'development') {
 var config = {
     base_url_mapconfig: '/:dbname/layergroup',
     log_full_layergroup_token: global.environment.log_full_layergroup_token,
-    grainstore: {
-    }, //see grainstore npm for other options
+    grainstore: global.environment.grainstore,
     redis: global.environment.redis,
     renderer: global.environment.renderer,
     enable_cors: global.environment.enable_cors,
