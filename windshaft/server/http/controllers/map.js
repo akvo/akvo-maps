@@ -1,6 +1,7 @@
 const util = require('util')
 var winston = require('winston');
 var assert = require('assert');
+var our_util = require('../util');
 var step = require('step');
 var windshaft = require('windshaft/lib/windshaft');
 var _ = require('underscore');
@@ -94,6 +95,14 @@ function assertHeaderExists(req, header) {
     }
 }
 
+function decrypt_db_credentials(credentials_encryption_key, db_credentials) {
+    return {
+        dbhost: our_util.decrypt(credentials_encryption_key, db_credentials.dbhost),
+        dbuser: our_util.decrypt(credentials_encryption_key, db_credentials.dbuser),
+        dbpassword: our_util.decrypt(credentials_encryption_key, db_credentials.dbpassword),
+        dbport: db_credentials.dbport};
+}
+
 MapController.prototype.create = function(req, res, prepareConfigFn) {
     var self = this;
 
@@ -118,7 +127,7 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
                                                 dbport: req.headers['x-db-port']};
 
             // Making it available to downstream
-            _.extend(req.params, requestMapConfig.db_credentials);
+            _.extend(req.params, decrypt_db_credentials(req.credentials_encryption_key, requestMapConfig.db_credentials));
 
             var mapConfig = MapConfig.create(requestMapConfig);
             self.mapBackend.createLayergroup(
@@ -183,13 +192,14 @@ MapController.prototype.tileOrLayer = function (req, res) {
                 if (err) {
                         throw err;
                 }
-                _.extend(req.params, mapConfig.obj().db_credentials);
-                return 2;
+                return decrypt_db_credentials(req.credentials_encryption_key, mapConfig.obj().db_credentials);
         },
-        function mapController$getTile(err, nothing) {
+        function mapController$getTile(err, db_credentials) {
             if ( err ) {
                 throw err;
             }
+            _.extend(req.params, db_credentials);
+
             self.tileBackend.getTile(mapConfigProvider, req.params, this);
         },
         function mapController$finalize(err, tile, headers, times) {

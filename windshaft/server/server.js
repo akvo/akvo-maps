@@ -47,6 +47,7 @@ global.environment = merge(merge(default_environment,just_global_properties), gl
 
 assert.ok(global.environment.redis.host, "Must specify Redis host in configuration");
 assert.ok(global.environment.redis.max, "Must specify Redis max number of connections in configuration");
+assert.ok(global.environment.credentials_encryption_key, "Must specify an encryption key for the DB credentials");
 
 winston.configure({
   level: global.environment.log_level,
@@ -89,8 +90,7 @@ var config = {
               req.params.cache_buster = tksplit[1];
           }
         }
-
-        // send the finished req object on
+        req.credentials_encryption_key = global.environment.credentials_encryption_key;
         callback(null,req);
     }
 

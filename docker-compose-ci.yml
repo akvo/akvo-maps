@@ -13,6 +13,7 @@ services:
       - ./postgres/provision:/pg-certs
    environment:
      - PGSSLROOTCERT=/pg-certs/server.crt
+     - ENCRYPTION_KEY=cdascmdsaklfmjwqe
  windshaft2:
    image: "akvo/akvo-maps:${TRAVIS_COMMIT}"
    volumes:
@@ -20,6 +21,7 @@ services:
       - ./postgres/provision:/pg-certs
    environment:
      - PGSSLROOTCERT=/pg-certs/server.crt
+     - ENCRYPTION_KEY=cdascmdsaklfmjwqe
  tests:
    build:
      context: ./end-to-end-tests
@@ -29,6 +31,8 @@ services:
       - ~/.m2:/root/.m2
       - ~/.lein:/root/.lein
       - ./postgres/provision:/pg-certs
+   environment:
+     - ENCRYPTION_KEY=cdascmdsaklfmjwqe
    depends_on:
       - redis
       - windshaft

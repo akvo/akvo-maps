@@ -6,7 +6,25 @@
             [cheshire.core :as json]
             [clojure.test :refer [deftest] :as test]
             [clojure.java.jdbc :as jdbc]
-            [again.core :as again]))
+            [again.core :as again])
+  (:import [javax.crypto Cipher]
+           [javax.crypto.spec SecretKeySpec]
+           [org.apache.commons.codec.binary Base64]
+           [org.apache.commons.codec.digest DigestUtils]))
+
+(defn encrypt
+  ([^String clear-text]
+    (encrypt (System/getenv "ENCRYPTION_KEY") clear-text))
+  ([^String secret ^String clear-text]
+   {:pre  [(string? secret) (string? clear-text)]
+    :post [(string? %) (Base64/isBase64 (.getBytes %))]}
+   (let [cipher (Cipher/getInstance "AES/ECB/PKCS5Padding")
+         key-bytes (DigestUtils/sha256 secret)
+         clear-text-bytes (.getBytes clear-text)
+         key-spec (SecretKeySpec. key-bytes "AES")
+         _ (.init cipher Cipher/ENCRYPT_MODE key-spec)
+         output (.doFinal cipher clear-text-bytes)]
+     (Base64/encodeBase64String output))))
 
 (defn check-db-is-up [f]
   (again/with-retries
@@ -30,9 +48,9 @@
              {:as                 :json
               :connection-manager connection-pool
               :headers            {"content-type"     "application/json"
-                                   "x-db-host"        "postgres"
-                                   "x-db-user"        "anybody"
-                                   "x-db-password"    "password"
+                                   "x-db-host"        (encrypt "postgres")
+                                   "x-db-user"        (encrypt "anybody")
+                                   "x-db-password"    (encrypt "password")
                                    "x-db-last-update" last-db-update
                                    "x-db-port"        "5432"}
               :body               (json/generate-string

@@ -16,6 +16,7 @@ services:
      - NODE_HEAPDUMP_OPTIONS=nosignal
      - NODE_ENV=development
      - PGSSLROOTCERT=/pg-certs/server.crt
+     - ENCRYPTION_KEY=asdfklmasclkmadslaqwewqe
    volumes:
       - ./windshaft/server:/tiler
       - ./windshaft/config/dev:/config
@@ -33,6 +34,7 @@ services:
    environment:
      - NODE_ENV=development
      - PGSSLROOTCERT=/pg-certs/server.crt
+     - ENCRYPTION_KEY=asdfklmasclkmadslaqwewqe
    volumes:
       - ./windshaft/server:/tiler
       - ./windshaft/config/dev:/config
@@ -45,6 +47,8 @@ services:
    build:
      context: ./end-to-end-tests
      dockerfile: Dockerfile
+   environment:
+      - ENCRYPTION_KEY=asdfklmasclkmadslaqwewqe
    volumes:
       - ./end-to-end-tests:/tests
       - ~/.m2:/root/.m2
