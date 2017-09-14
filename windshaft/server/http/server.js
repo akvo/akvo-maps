@@ -254,8 +254,8 @@ function bootstrap(opts) {
     app.use(bodyParser.json());
 
     morgan.token('url', function (req, res) {
-        var token = req.params['token'];
-        if (!opts.log_full_layergroup_token && token) {
+        var token = req.params && req.params['token'];
+        if (!opts.log_full_layergroup_token && token && token.length > 8) {
             return req.url.replace(token, token.substring(0,8) + '*'.repeat(token.length - 8));
         } else {
             return req.url;
