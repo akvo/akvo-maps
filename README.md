@@ -33,6 +33,8 @@ Additionally, to create the layergroup, you need to provide the following header
 1. X-DB-PORT: Postgres DB port.
 1. X-DB-LAST-UPDATE. See [caching docs](docs/caching.md)
 
+The host, user and password headers must an encrypted base64 byte array, using AES. The encryption key will be sha256 to get the correct bit-length. See [encryption](end-to-end-tests/test/windshaft_test/core_test.clj) and [decryption](windshaft/server/http/util.js)
+
 ### Javascript client example
 
 See [an example](viewer/index.html) that uses [Leaflet](http://leafletjs.com).

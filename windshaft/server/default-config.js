@@ -5,6 +5,8 @@ module.exports.global_emit_stats_interval = 10000;
 module.exports.default_layergroup_ttl = 900000;
 module.exports.log_full_layergroup_token = false;
 module.exports.enable_cors = false;
+// Encryption key must be provided
+// module.exports.credentials_encryption_key= process.env.ENCRYPTION_KEY;
 
 module.exports.redis = {
 //    host: no sensible default,
