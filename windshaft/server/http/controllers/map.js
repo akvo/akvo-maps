@@ -97,9 +97,9 @@ function assertHeaderExists(req, header) {
 
 function decrypt_db_credentials(credentials_encryption_key, db_credentials) {
     return {
-        dbhost: our_util.decrypt(credentials_encryption_key, db_credentials.dbhost),
-        dbuser: our_util.decrypt(credentials_encryption_key, db_credentials.dbuser),
-        dbpassword: our_util.decrypt(credentials_encryption_key, db_credentials.dbpassword),
+        dbhost: our_util.decrypt(credentials_encryption_key, db_credentials.iv, db_credentials.dbhost),
+        dbuser: our_util.decrypt(credentials_encryption_key, db_credentials.iv, db_credentials.dbuser),
+        dbpassword: our_util.decrypt(credentials_encryption_key, db_credentials.iv, db_credentials.dbpassword),
         dbport: db_credentials.dbport};
 }
 
@@ -119,12 +119,15 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
             assertHeaderExists(req, 'x-db-user');
             assertHeaderExists(req, 'x-db-password');
             assertHeaderExists(req, 'x-db-port');
+            assertHeaderExists(req, 'x-encrypt-init-vector');
 
             // Storing it in Redis
             requestMapConfig.db_credentials = { dbhost: req.headers['x-db-host'],
                                                 dbuser: req.headers['x-db-user'],
                                                 dbpassword: req.headers['x-db-password'],
-                                                dbport: req.headers['x-db-port']};
+                                                dbport: req.headers['x-db-port'],
+                                                iv: req.headers['x-encrypt-init-vector'],
+                                                };
 
             // Making it available to downstream
             _.extend(req.params, decrypt_db_credentials(req.credentials_encryption_key, requestMapConfig.db_credentials));

@@ -8,21 +8,40 @@
             [clojure.java.jdbc :as jdbc]
             [again.core :as again])
   (:import [javax.crypto Cipher]
-           [javax.crypto.spec SecretKeySpec]
+           [javax.crypto.spec SecretKeySpec IvParameterSpec]
            [org.apache.commons.codec.binary Base64]
-           [org.apache.commons.codec.digest DigestUtils]))
+           [org.apache.commons.codec.digest DigestUtils]
+           (java.security SecureRandom)))
+
+(defonce ^:private secure-random (SecureRandom.))
+
+(defn random-iv
+  "Generate a base64 encoded random byte array of size 16"
+  []
+  (let [iv-bytes (byte-array 16)]
+    (.nextBytes secure-random iv-bytes)
+    (Base64/encodeBase64String iv-bytes)))
+
+(defn base64?
+  "Returns true if s is a base64 encoded string"
+  [s]
+  (and (string? s)
+       (Base64/isBase64 (.getBytes ^String s))))
 
 (defn encrypt
-  ([^String clear-text]
-    (encrypt (System/getenv "ENCRYPTION_KEY") clear-text))
-  ([^String secret ^String clear-text]
-   {:pre  [(string? secret) (string? clear-text)]
-    :post [(string? %) (Base64/isBase64 (.getBytes %))]}
-   (let [cipher (Cipher/getInstance "AES/ECB/PKCS5Padding")
+  "Accepts a string secret, an optional base64 encoded initialization vector (iv)
+  and the clear text and returns a base64 encoded byte array."
+  ([iv clear-text]
+   (encrypt (System/getenv "ENCRYPTION_KEY") iv clear-text))
+  ([^String secret ^String iv ^String clear-text]
+   {:pre  [(string? secret) (base64? iv) (string? clear-text)]
+    :post [(base64? %)]}
+   (let [cipher (Cipher/getInstance "AES/CBC/PKCS5Padding")
          key-bytes (DigestUtils/sha256 secret)
          clear-text-bytes (.getBytes clear-text)
          key-spec (SecretKeySpec. key-bytes "AES")
-         _ (.init cipher Cipher/ENCRYPT_MODE key-spec)
+         iv-parameter-spec (IvParameterSpec. (Base64/decodeBase64 iv))
+         _ (.init cipher Cipher/ENCRYPT_MODE key-spec iv-parameter-spec)
          output (.doFinal cipher clear-text-bytes)]
      (Base64/encodeBase64String output))))
 
@@ -44,24 +63,26 @@
 (def second-instance "http://windshaft2:4000/test_database/layergroup")
 
 (defn create-map [last-db-update]
-  (http/post first-instance
-             {:as                 :json
-              :connection-manager connection-pool
-              :headers            {"content-type"     "application/json"
-                                   "x-db-host"        (encrypt "postgres")
-                                   "x-db-user"        (encrypt "anybody")
-                                   "x-db-password"    (encrypt "password")
-                                   "x-db-last-update" last-db-update
-                                   "x-db-port"        "5432"}
-              :body               (json/generate-string
-                                    {:version "1.5.0",
-                                     :layers  [{:type    "mapnik",
-                                                :options {:sql              "select instance, geom, yearcons::integer as yearcons from liberia where yearcons ~ '^\\d{4}$';",
-                                                          :geom_column      "geom",
-                                                          :srid             4326,
-                                                          :cartocss         "#s { marker-width: 5; marker-fill:#f45; marker-line-color:#813; marker-allow-overlap:true; marker-fill-opacity: 0.3;} #s[yearcons>=2009] {marker-fill: #1F78B4; marker-line-color: #0000FF;}",
-                                                          :cartocss_version "2.0.0",
-                                                          :interactivity    "instance"}}]})}))
+  (let [iv (random-iv)]
+    (http/post first-instance
+               {:as                 :json
+                :connection-manager connection-pool
+                :headers            {"content-type"          "application/json"
+                                     "x-db-host"             (encrypt iv "postgres")
+                                     "x-db-user"             (encrypt iv "anybody")
+                                     "x-db-password"         (encrypt iv "password")
+                                     "x-db-last-update"      last-db-update
+                                     "x-encrypt-init-vector" iv
+                                     "x-db-port"             "5432"}
+                :body               (json/generate-string
+                                      {:version "1.5.0",
+                                       :layers  [{:type    "mapnik",
+                                                  :options {:sql              "select instance, geom, yearcons::integer as yearcons from liberia where yearcons ~ '^\\d{4}$';",
+                                                            :geom_column      "geom",
+                                                            :srid             4326,
+                                                            :cartocss         "#s { marker-width: 5; marker-fill:#f45; marker-line-color:#813; marker-allow-overlap:true; marker-fill-opacity: 0.3;} #s[yearcons>=2009] {marker-fill: #1F78B4; marker-line-color: #0000FF;}",
+                                                            :cartocss_version "2.0.0",
+                                                            :interactivity    "instance"}}]})})))
 
 (deftest happy-path
          (let [last-db-update 10000
