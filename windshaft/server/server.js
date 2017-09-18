@@ -4,6 +4,7 @@ var merge = require('merge-deep');
 var assert = require('assert');
 var default_environment = require('./default-config.js');
 var winston = require('winston');
+var Encryptor = require('./http/db_credentials');
 
 var PORT = 4000;
 
@@ -69,6 +70,8 @@ if (process.env.NODE_ENV == 'development') {
       });
 }
 
+var encryptor = new Encryptor(global.environment.credentials_encryption_key);
+
 // TODO: mml-builder has a use_workers flag in line 40
 var config = {
     base_url_mapconfig: '/:dbname/layergroup',
@@ -90,7 +93,7 @@ var config = {
               req.params.cache_buster = tksplit[1];
           }
         }
-        req.credentials_encryption_key = global.environment.credentials_encryption_key;
+        req.encryptor = encryptor;
         callback(null,req);
     }
 

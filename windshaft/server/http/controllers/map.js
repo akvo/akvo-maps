@@ -1,7 +1,6 @@
 const util = require('util')
 var winston = require('winston');
 var assert = require('assert');
-var our_util = require('../util');
 var step = require('step');
 var windshaft = require('windshaft/lib/windshaft');
 var _ = require('underscore');
@@ -95,14 +94,6 @@ function assertHeaderExists(req, header) {
     }
 }
 
-function decrypt_db_credentials(credentials_encryption_key, db_credentials) {
-    return {
-        dbhost: our_util.decrypt(credentials_encryption_key, db_credentials.iv, db_credentials.dbhost),
-        dbuser: our_util.decrypt(credentials_encryption_key, db_credentials.iv, db_credentials.dbuser),
-        dbpassword: our_util.decrypt(credentials_encryption_key, db_credentials.iv, db_credentials.dbpassword),
-        dbport: db_credentials.dbport};
-}
-
 MapController.prototype.create = function(req, res, prepareConfigFn) {
     var self = this;
 
@@ -119,18 +110,17 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
             assertHeaderExists(req, 'x-db-user');
             assertHeaderExists(req, 'x-db-password');
             assertHeaderExists(req, 'x-db-port');
-            assertHeaderExists(req, 'x-encrypt-init-vector');
 
             // Storing it in Redis
-            requestMapConfig.db_credentials = { dbhost: req.headers['x-db-host'],
-                                                dbuser: req.headers['x-db-user'],
-                                                dbpassword: req.headers['x-db-password'],
-                                                dbport: req.headers['x-db-port'],
-                                                iv: req.headers['x-encrypt-init-vector'],
-                                                };
+            db_credentials = { dbhost: req.headers['x-db-host'],
+                               dbuser: req.headers['x-db-user'],
+                               dbpassword: req.headers['x-db-password'],
+                               dbport: req.headers['x-db-port']};
+
+            requestMapConfig.db_credentials = req.encryptor.encrypt(db_credentials);
 
             // Making it available to downstream
-            _.extend(req.params, decrypt_db_credentials(req.credentials_encryption_key, requestMapConfig.db_credentials));
+            _.extend(req.params, db_credentials);
 
             var mapConfig = MapConfig.create(requestMapConfig);
             self.mapBackend.createLayergroup(
@@ -195,7 +185,7 @@ MapController.prototype.tileOrLayer = function (req, res) {
                 if (err) {
                         throw err;
                 }
-                return decrypt_db_credentials(req.credentials_encryption_key, mapConfig.obj().db_credentials);
+                return req.encryptor.decrypt(mapConfig.obj().db_credentials);
         },
         function mapController$getTile(err, db_credentials) {
             if ( err ) {
