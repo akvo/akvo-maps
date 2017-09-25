@@ -10,7 +10,8 @@ if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
     exit 0
 fi
 
-IMAGE_NAME="akvo/akvo-maps:${TRAVIS_COMMIT}"
+TAG=$(echo -n "${TRAVIS_COMMIT}" | cut -c-8)
+IMAGE_NAME="akvo/akvo-maps:${TAG}"
 
 # Pushing images
 docker login -u="${DOCKERHUB_USERNAME}" -p="${DOCKERHUB_PASSWORD}"

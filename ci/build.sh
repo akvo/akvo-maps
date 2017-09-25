@@ -10,7 +10,8 @@ fi
 
 cd windshaft
 
-IMAGE_NAME="akvo/akvo-maps:${TRAVIS_COMMIT}"
+TAG=$(echo -n "${TRAVIS_COMMIT}" | cut -c-8)
+IMAGE_NAME="akvo/akvo-maps:${TAG}"
 
 docker build -t "${DOCKER_IMAGE_NAME:=$IMAGE_NAME}" .
 
