@@ -10,6 +10,7 @@ if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
     exit 0
 fi
 
+IMAGE_TAG=$(echo -n "${TRAVIS_COMMIT}" | cut -c-8)
 IMAGE_NAME="akvo/akvo-maps:${IMAGE_TAG}"
 
 # Pushing images
