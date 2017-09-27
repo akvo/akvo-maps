@@ -4,6 +4,23 @@
     {
       "type": "mapnik",
       "options": {
+        "sql": "select 1 as instance, st_union(geom) as geom from lbr_humandata where adm1_name = 'Grand Cape Mount'",
+        "geom_column": "geom",
+        "srid": 4326,
+        "cartocss": "#s { polygon-opacity: 0.25; line-color: #000; line-width: 0.5; polygon-fill: #000}",
+        "cartocss_version": "2.0.0",
+        "interactivity": "instance"
+      }
+    }
+  ]
+}
+
+{
+  "version": "1.5.0",
+  "layers": [
+    {
+      "type": "mapnik",
+      "options": {
         "sql": "select instance, geom, yearcons::integer as yearcons from liberia where yearcons ~ '^\\d{4}$';",
         "geom_column": "geom",
         "srid": 4326,
