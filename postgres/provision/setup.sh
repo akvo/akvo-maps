@@ -19,6 +19,9 @@ psql -f $DIR/helpers/create-a-database.sql
 
 psql -d test_database -f $DIR/helpers/create-extensions.sql
 
+psql -d test_database -f $DIR/helpers/lbr_humandata.sql
+
+
 sh -c "$DIR/helpers/import_csv.sh $DIR/helpers/liberia.csv | psql -d test_database";
 echo "SELECT AddGeometryColumn('liberia', 'geom', 4326, 'point', 2);" \
      "UPDATE liberia SET geom = " \
@@ -29,6 +32,7 @@ echo "SELECT AddGeometryColumn('liberia', 'geom', 4326, 'point', 2);" \
 
 echo "ALTER TABLE liberia OWNER TO anybody;" | psql -d test_database
 echo "ALTER TABLE spatial_ref_sys OWNER TO anybody;" | psql -d test_database
+echo "ALTER TABLE lbr_humandata OWNER TO anybody;" | psql -d test_database
 
 echo ""
 echo "----------"
