@@ -30,6 +30,7 @@ Additionally, to create the layergroup, you need to provide the following header
 1. X-DB-HOST: Postgres DB host.
 1. X-DB-USER: Postgres DB user.
 1. X-DB-PASSWORD: Postgres DB password.
+1. X-DB-NAME: Postgres DB name.
 1. X-DB-PORT: Postgres DB port.
 1. X-DB-LAST-UPDATE. See [caching docs](docs/caching.md)
 
