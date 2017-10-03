@@ -31,7 +31,8 @@ Encryptor.prototype.encrypt = function(db_credentials) {
         dbhost: _encrypt(this.keyBuffer, iv, db_credentials.dbhost),
         dbuser: _encrypt(this.keyBuffer, iv, db_credentials.dbuser),
         dbpassword: _encrypt(this.keyBuffer, iv, db_credentials.dbpassword),
-        dbport: db_credentials.dbport
+        dbport: db_credentials.dbport,
+        dbname: db_credentials.dbname
         };
 };
 
@@ -41,6 +42,7 @@ Encryptor.prototype.decrypt = function(db_credentials) {
         dbhost: _decrypt(this.keyBuffer, iv, db_credentials.dbhost),
         dbuser: _decrypt(this.keyBuffer, iv, db_credentials.dbuser),
         dbpassword: _decrypt(this.keyBuffer, iv, db_credentials.dbpassword),
-        dbport: db_credentials.dbport
+        dbport: db_credentials.dbport,
+        dbname: db_credentials.dbname
         };
 };

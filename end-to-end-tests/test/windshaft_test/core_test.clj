@@ -22,19 +22,20 @@
 
 (def connection-pool (clj-http.conn-mgr/make-reusable-conn-manager {:timeout 20 :threads 8 :default-per-route 8}))
 
-(def first-instance "http://windshaft:4000/test_database/layergroup")
-(def second-instance "http://windshaft2:4000/test_database/layergroup")
+(def first-instance "http://windshaft:4000/layergroup")
+(def second-instance "http://windshaft2:4000/layergroup")
 
 (defn create-map [last-db-update]
   (http/post first-instance
              {:as                 :json
               :connection-manager connection-pool
-              :headers            {"content-type"          "application/json"
-                                   "x-db-host"             "postgres"
-                                   "x-db-user"             "anybody"
-                                   "x-db-password"         "password"
-                                   "x-db-last-update"      last-db-update
-                                   "x-db-port"             "5432"}
+              :headers            {"content-type"     "application/json"
+                                   "x-db-host"        "postgres"
+                                   "x-db-user"        "anybody"
+                                   "x-db-password"    "password"
+                                   "x-db-name"        "test_database"
+                                   "x-db-last-update" last-db-update
+                                   "x-db-port"        "5432"}
               :body               (json/generate-string
                                     {:version "1.5.0",
                                      :layers  [{:type    "mapnik",

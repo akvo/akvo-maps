@@ -74,7 +74,7 @@ var encryptor = new Encryptor(global.environment.credentials_encryption_key);
 
 // TODO: mml-builder has a use_workers flag in line 40
 var config = {
-    base_url_mapconfig: '/:dbname/layergroup',
+    base_url_mapconfig: '/layergroup',
     log_full_layergroup_token: global.environment.log_full_layergroup_token,
     grainstore: global.environment.grainstore,
     redis: global.environment.redis,

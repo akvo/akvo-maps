@@ -110,11 +110,13 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
             assertHeaderExists(req, 'x-db-user');
             assertHeaderExists(req, 'x-db-password');
             assertHeaderExists(req, 'x-db-port');
+            assertHeaderExists(req, 'x-db-name');
 
             // Storing it in Redis
             db_credentials = { dbhost: req.headers['x-db-host'],
                                dbuser: req.headers['x-db-user'],
                                dbpassword: req.headers['x-db-password'],
+                               dbname: req.headers['x-db-name'],
                                dbport: req.headers['x-db-port']};
 
             requestMapConfig.db_credentials = req.encryptor.encrypt(db_credentials);
