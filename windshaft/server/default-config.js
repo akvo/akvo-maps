@@ -71,6 +71,7 @@ module.exports.renderer = {
 };
 module.exports.grainstore = {
     mapnik_version: "3.0.12" // will be looked up at runtime if undefined
+ //   datasource: {max_size: 1} // To configure the mapnik connection pool. Used by https://github.com/mapnik/mapnik/blob/333ef9fde145f88339eaccba810305707bae9b0e/plugins/input/postgis/postgis_datasource.cpp#L81
 };
 module.exports.enable_cors = false;
 // Optional: setup statsd. If not set, nothing will be monitored.

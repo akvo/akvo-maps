@@ -277,7 +277,7 @@ function addFilters(app, opts) {
         // Enable CORS access by web browsers if set
         doCORS: function(res, extraHeaders) {
             if (opts.enable_cors) {
-                var baseHeaders = "X-Requested-With, X-Prototype-Version, X-CSRF-Token, Authorization, X-DB-PORT, X-DB-HOST, X-DB-PASSWORD, X-DB-USER, X-DB-LAST-UPDATE";
+                var baseHeaders = "X-Requested-With, X-Prototype-Version, X-CSRF-Token, Authorization, X-DB-PORT, X-DB-HOST, X-DB-PASSWORD, X-DB-USER, X-DB-LAST-UPDATE, X-DB-NAME";
                 if(extraHeaders) {
                     baseHeaders += ", " + extraHeaders;
                 }
