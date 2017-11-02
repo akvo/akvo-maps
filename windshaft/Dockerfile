@@ -56,4 +56,6 @@ COPY server/package.json server/npm-shrinkwrap.json /tiler/
 RUN cd /tiler && npm install
 
 COPY server /tiler
-CMD cd /tiler && chmod u+x ./run.sh && ./run.sh
+WORKDIR /tiler
+RUN chmod u+x ./run.sh
+CMD ./run.sh
