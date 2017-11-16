@@ -70,6 +70,12 @@
              (clojure.test/is (= (:body tile-first-instance)
                                  (:body tile-second-instance))))))
 
+(deftest layergroup-is-consistent
+  (let [now (System/currentTimeMillis)
+        response-1 (create-map now)
+        response-2 (create-map now)]
 
+    (clojure.test/is (= (-> response-1 :body :layergroupid)
+                        (-> response-2 :body :layergroupid)))))
 
 
