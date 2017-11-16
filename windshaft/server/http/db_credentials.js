@@ -18,6 +18,10 @@ function _decrypt(secretBuffer, initializationVector, cipherText) {
     return deciphertext += decipher.final();
 }
 
+function md5Hash(s) {
+    return crypto.createHash('md5').update(s, 'binary').digest('hex');
+}
+
 function Encryptor(redis_pool, secret, ttl_in_seconds) {
     var _hash = crypto.createHash("sha256");
     _hash.update(secret, "utf8");
@@ -25,9 +29,14 @@ function Encryptor(redis_pool, secret, ttl_in_seconds) {
     this.keyBuffer = Buffer.from(_sha256key);
     this._redis_pool = redis_pool;
     this._ttl_in_seconds = ttl_in_seconds;
+    this._salt = md5Hash(secret);
 }
 
 module.exports = Encryptor;
+
+Encryptor.prototype.saltForMapConfig = function() {
+    return this._salt;
+};
 
 Encryptor.prototype.encrypt = function(db_credentials) {
     var iv = crypto.randomBytes(16);

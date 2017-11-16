@@ -124,6 +124,8 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
             // Making it available to downstream
             _.extend(req.params, db_credentials);
 
+            requestMapConfig.salt = self.dbCredentials.saltForMapConfig();
+
             var mapConfig = MapConfig.create(requestMapConfig);
             self.mapBackend.createLayergroup(
                 mapConfig, req.params, new DummyMapConfigProvider(mapConfig, req.params), this
