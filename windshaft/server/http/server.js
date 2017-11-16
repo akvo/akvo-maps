@@ -166,7 +166,7 @@ module.exports = function(opts, default_layergroup_ttl) {
       res.status(statusCode).send(err);
     };
 
-    var dbCredentials = new DbCredentials(redisPool, opts.encryption_key);
+    var dbCredentials = new DbCredentials(redisPool, opts.encryption_key, default_layergroup_ttl / 1000);
 
     /*******************************************************************************************************************
      * Routing

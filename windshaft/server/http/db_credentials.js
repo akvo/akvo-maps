@@ -18,12 +18,13 @@ function _decrypt(secretBuffer, initializationVector, cipherText) {
     return deciphertext += decipher.final();
 }
 
-function Encryptor(redis_pool, secret) {
+function Encryptor(redis_pool, secret, ttl_in_seconds) {
     var _hash = crypto.createHash("sha256");
     _hash.update(secret, "utf8");
     var _sha256key = _hash.digest();
     this.keyBuffer = Buffer.from(_sha256key);
     this._redis_pool = redis_pool;
+    this._ttl_in_seconds = ttl_in_seconds;
 }
 
 module.exports = Encryptor;
@@ -82,7 +83,7 @@ Encryptor.prototype._redisCmd = function(func, args, callback) {
 Encryptor.prototype.saveDbCredentials = function(layergroupid, db_credentials, callback) {
       var that = this;
       var key = "db_cred|" + layergroupid;
-      var exp = 300;
+      var exp = this.ttl_in_seconds;
       step(
         function writeRecord() {
           that._redisCmd('SETNX', [key, JSON.stringify(that.encrypt(db_credentials))], this);
@@ -99,7 +100,7 @@ Encryptor.prototype.saveDbCredentials = function(layergroupid, db_credentials, c
 Encryptor.prototype.loadDbCredentials = function(layergroupid, callback) {
   var that = this;
   var key = "db_cred|" + layergroupid;
-  var exp = 300;
+  var exp = this.ttl_in_seconds;
   step(
     function getRecord() {
       that._redisCmd('GET', [key], this);
