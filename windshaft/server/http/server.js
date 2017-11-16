@@ -20,6 +20,8 @@ var MapController = require('./controllers/map');
 var StatsClient = require('./stats/client');
 var RendererStatsReporter = require('./stats/reporter');
 
+var DbCredentials = require('../http/db_credentials');
+
 //
 // @param opts server options object. Example value:
 //     {
@@ -164,11 +166,13 @@ module.exports = function(opts, default_layergroup_ttl) {
       res.status(statusCode).send(err);
     };
 
+    var dbCredentials = new DbCredentials(redisPool, opts.encryption_key);
+
     /*******************************************************************************************************************
      * Routing
      ******************************************************************************************************************/
 
-    var mapController = new MapController(app, map_store, mapBackend, tileBackend, attributesBackend);
+    var mapController = new MapController(app, map_store, mapBackend, tileBackend, attributesBackend, dbCredentials);
     mapController.register(app);
 
     var staticMapsController = new StaticMapsController(app, map_store, previewBackend);

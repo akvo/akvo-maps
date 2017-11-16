@@ -1,4 +1,7 @@
 var crypto = require('crypto');
+var step = require('step');
+var _  = require('underscore');
+var assert = require('assert');
 
 function _encrypt(secretBuffer, initializationVector, plaintext) {
     var cipher = crypto.createCipheriv("aes-256-cbc", secretBuffer, initializationVector);
@@ -15,11 +18,12 @@ function _decrypt(secretBuffer, initializationVector, cipherText) {
     return deciphertext += decipher.final();
 }
 
-function Encryptor(secret) {
+function Encryptor(redis_pool, secret) {
     var _hash = crypto.createHash("sha256");
     _hash.update(secret, "utf8");
     var _sha256key = _hash.digest();
     this.keyBuffer = Buffer.from(_sha256key);
+    this._redis_pool = redis_pool;
 }
 
 module.exports = Encryptor;
@@ -45,4 +49,81 @@ Encryptor.prototype.decrypt = function(db_credentials) {
         dbport: db_credentials.dbport,
         dbname: db_credentials.dbname
         };
+};
+
+Encryptor.prototype._redisCmd = function(func, args, callback) {
+  var client;
+  var pool = this._redis_pool;
+  var db = 0;
+
+  step(
+        function getRedisClient() {
+            pool.acquire(db, this);
+        },
+        function executeQuery(err, data) {
+            assert.ifError(err);
+
+            client = data;
+            args.push(this);
+            client[func].apply(client, args);
+        },
+        function releaseRedisClient(err, data) {
+            if ( ! _.isUndefined(client) ) {
+                pool.release(db, client);
+            }
+            if ( callback ) {
+                callback(err, data);
+            }
+        }
+    );
+
+};
+
+Encryptor.prototype.saveDbCredentials = function(layergroupid, db_credentials, callback) {
+      var that = this;
+      var key = "db_cred|" + layergroupid;
+      var exp = 300;
+      step(
+        function writeRecord() {
+          that._redisCmd('SETNX', [key, JSON.stringify(that.encrypt(db_credentials))], this);
+        },
+        function finish(err, wasNew) {
+          if ( ! err ) {
+            that._redisCmd('EXPIRE', [key, exp]); // not waiting for response
+          }
+          callback(err, key, !wasNew);
+        }
+      );
+};
+
+Encryptor.prototype.loadDbCredentials = function(layergroupid, callback) {
+  var that = this;
+  var key = "db_cred|" + layergroupid;
+  var exp = 300;
+  step(
+    function getRecord() {
+      that._redisCmd('GET', [key], this);
+    },
+    function parseRecord(err, json) {
+      assert.ifError(err);
+
+      if ( ! json ) {
+        throw new Error("Invalid or nonexistent db token '" + layergroupid + "'");
+      }
+      return JSON.parse(json);
+    },
+    function instantiateConfig(err, db_credentials) {
+      assert.ifError(err);
+
+      var obj = that.decrypt(db_credentials);
+      return obj;
+    },
+    function finish(err, obj) {
+      if ( ! err ) {
+        // Postpone expiration for the key
+        that._redisCmd('EXPIRE', [key, exp]); // not waiting for response
+      }
+      callback(err, obj);
+    }
+  );
 };
