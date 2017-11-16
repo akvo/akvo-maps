@@ -19,12 +19,13 @@ var MapStoreMapConfigProvider = windshaft.model.provider.MapStoreMapConfig;
  * @param {AttributesBackend} attributesBackend
  * @constructor
  */
-function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend) {
+function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend, dbCredentials) {
     this._app = app;
     this.mapStore = mapStore;
     this.mapBackend = mapBackend;
     this.tileBackend = tileBackend;
     this.attributesBackend = attributesBackend;
+    this.dbCredentials = dbCredentials;
     EventEmitter.call(this);
 }
 
@@ -99,6 +100,7 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
 
     this._app.doCORS(res);
 
+    var db_credentials = {};
     step(
         function setupParams(){
             self._app.req2params(req, this);
@@ -119,14 +121,23 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
                                dbname: req.headers['x-db-name'],
                                dbport: req.headers['x-db-port']};
 
-            requestMapConfig.db_credentials = req.encryptor.encrypt(db_credentials);
-
             // Making it available to downstream
             _.extend(req.params, db_credentials);
+
+            requestMapConfig.salt = self.dbCredentials.saltForMapConfig();
 
             var mapConfig = MapConfig.create(requestMapConfig);
             self.mapBackend.createLayergroup(
                 mapConfig, req.params, new DummyMapConfigProvider(mapConfig, req.params), this
+            );
+        },
+        function saveDbCredentials(err, response, times) {
+            assert.ifError(err);
+            callback = this;
+            self.dbCredentials.saveDbCredentials(response.layergroupid, db_credentials,
+                    function(err) {
+                        return callback(err, response, times);
+                    }
             );
         },
         function addLastModifiedTimestamp(err, response, times) {
@@ -187,7 +198,7 @@ MapController.prototype.tileOrLayer = function (req, res) {
                 if (err) {
                         throw err;
                 }
-                return req.encryptor.decrypt(mapConfig.obj().db_credentials);
+                self.dbCredentials.loadDbCredentials(mapConfig.id(), this);
         },
         function mapController$getTile(err, db_credentials) {
             if ( err ) {
