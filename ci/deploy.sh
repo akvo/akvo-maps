@@ -16,3 +16,4 @@ IMAGE_NAME="akvo/akvo-maps:${IMAGE_TAG}"
 # Pushing images
 docker login -u="${DOCKERHUB_USERNAME}" -p="${DOCKERHUB_PASSWORD}"
 docker push "${DOCKER_IMAGE_NAME:=$IMAGE_NAME}"
+docker push "akvo/akvo-maps-statsd-to-prometheus:${IMAGE_TAG}"

@@ -16,8 +16,7 @@ module.exports.renderer = {
 };
 module.exports.enable_cors = true;
 module.exports.statsd = {
-    host: 'statsd-server',
-    port: 8125,
-    prefix: 'dev.'+ require("os").hostname() + ".",
+    host: 'statsd',
+    port: 9125,
     cacheDns: true
 };

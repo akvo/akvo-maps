@@ -18,6 +18,8 @@ docker build -t "${DOCKER_IMAGE_NAME:=$IMAGE_NAME}" .
 
 cd ..
 
+docker build -t "akvo/akvo-maps-statsd-to-prometheus:${IMAGE_TAG}" statsd-to-prometheus
+
 docker-compose -f docker-compose-ci.yml up -d --build
 docker-compose -f docker-compose-ci.yml run tests /tests/import-and-run.sh test
 rc=$?
