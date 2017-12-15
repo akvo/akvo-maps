@@ -32,21 +32,19 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
 util.inherits(MapController, EventEmitter);
 module.exports = MapController;
 
-function statsd (path) {
-  return function (req, res, next) {
+function statsd (path, req, status) {
     var method = req.method || 'unknown_method';
-    req.statsdKey = ['http', method.toLowerCase(), path, req.params['format']].join('.');
-    next();
-  };
+    var format = req.params['format'] || '';
+    req.statsdKey = ['http', status, method.toLowerCase(), path, format.replace(/\./g, '_'), req.params['dbname']].join('.');
 }
 
 MapController.prototype.register = function(app) {
-    app.get(app.base_url_mapconfig + '/:token/:z/:x/:y@:scale_factor?x.:format', statsd('tile'), this.tile.bind(this));
-    app.get(app.base_url_mapconfig + '/:token/:z/:x/:y.:format', statsd('tile'), this.tile.bind(this));
-    app.get(app.base_url_mapconfig + '/:token/:layer/:z/:x/:y.(:format)', statsd('layer'), this.layer.bind(this));
+    app.get(app.base_url_mapconfig + '/:token/:z/:x/:y@:scale_factor?x.:format', this.tile.bind(this));
+    app.get(app.base_url_mapconfig + '/:token/:z/:x/:y.:format', this.tile.bind(this));
+    app.get(app.base_url_mapconfig + '/:token/:layer/:z/:x/:y.(:format)', this.layer.bind(this));
     app.options(app.base_url_mapconfig, this.cors.bind(this));
-    app.post(app.base_url_mapconfig, statsd('create'), this.createPost.bind(this));
-    app.get(app.base_url_mapconfig + '/:token/:layer/attributes/:fid', statsd('attributes'), this.attributes.bind(this));
+    app.post(app.base_url_mapconfig, this.createPost.bind(this));
+    app.get(app.base_url_mapconfig + '/:token/:layer/attributes/:fid', this.attributes.bind(this));
 };
 
 // send CORS headers when client send options.
@@ -142,13 +140,16 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
         },
         function addLastModifiedTimestamp(err, response, times) {
             assert.ifError(err);
-            self.emit('perf', times);
+            self.emit('perf', times, req.params['dbname']);
             return self.addLastModifiedTimestamp(req, response, this);
         },
         function finish(err, response){
             if (err) {
-                self._app.sendError(res, { errors: [ err.message ] }, self._app.findStatusCode(err), 'LAYERGROUP', err);
+                var statusCode = self._app.findStatusCode(err);
+                statsd('create', req, statusCode);
+                self._app.sendError(res, { errors: [ err.message ] }, statusCode, 'LAYERGROUP', err);
             } else {
+                statsd('create', req, 200);
                 res.status(200).send(response);
             }
         }
@@ -209,7 +210,7 @@ MapController.prototype.tileOrLayer = function (req, res) {
             self.tileBackend.getTile(mapConfigProvider, req.params, this);
         },
         function mapController$finalize(err, tile, headers, times) {
-            self.emit('perf', times);
+            self.emit('perf', times, req.params['dbname']);
             self.finalizeGetTileOrGrid(err, req, res, tile, headers);
             return null;
         },
@@ -234,8 +235,13 @@ MapController.prototype.finalizeGetTileOrGrid = function(err, req, res, tile, he
             errMsg = 'style'+matches[2]+': ' + matches[1];
         }
 
+        var statusCode = self._app.findStatusCode(err);
+        statsd('tile', req, statusCode);
+
         this._app.sendError(res, { errors: ['' + errMsg] }, this._app.findStatusCode(err), 'TILE', err);
     } else {
+        statsd('tile', req, 200);
+
         res.set('Cache-Control', 'max-age=31536000');
         res.status(200);
         if (headers) res.set(headers);

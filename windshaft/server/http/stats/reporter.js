@@ -111,11 +111,11 @@ function rendererCacheErrorListener() {
     global.statsClient.increment('windshaft.rendercache.error');
 }
 
-function perfStats(times) {
+function perfStats(times, dbname) {
     if (times) {
         setImmediate(function () {
             Object.keys(times).forEach(function (key) {
-             global.statsClient.timing('windshaft.perf.' + key, times[key]);
+             global.statsClient.timing('windshaft.perf.' + key + '.' + dbname, times[key]);
            });
         });
     }
