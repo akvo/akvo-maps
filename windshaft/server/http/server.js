@@ -179,8 +179,8 @@ module.exports = function(opts, default_layergroup_ttl) {
     staticMapsController.register(app);
 
     // simple testable route
-    app.get('/', function(req, res) {
-        res.send('This is an example HTTP server using windshaft library');
+    app.get('/healthz', function(req, res) {
+        res.send('', 200);
     });
 
     // version
