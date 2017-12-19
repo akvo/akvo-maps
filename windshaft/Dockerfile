@@ -38,7 +38,8 @@ ENV NODE_PATH=$NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules \
 
 COPY server/package.json server/npm-shrinkwrap.json /tiler/
 
-RUN cd /tiler && npm install
+RUN npm install -g nodemon && \
+    cd /tiler && npm install
 
 # Execute environment
 
