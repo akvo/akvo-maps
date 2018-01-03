@@ -4,7 +4,7 @@
             clojure.stacktrace
             clojure.string
             [cheshire.core :as json]
-            [clojure.test :refer [deftest] :as test]
+            [clojure.test :refer [deftest testing is] :as test]
             [clojure.java.jdbc :as jdbc]
             [again.core :as again]))
 
@@ -83,3 +83,19 @@
 
     (clojure.test/is (= (-> response-1 :body :layergroupid)
                         (-> response-2 :body :layergroupid)))))
+
+(defn status-code [url]
+  (try
+    (:status (http/get url default-http-opts))
+    (catch Exception e
+      (:status (ex-data e)))))
+
+(deftest invalid-requests
+  (let [response (create-map (System/currentTimeMillis))
+        layer-group (-> response :body :layergroupid)]
+    (testing "Not a number"
+      (test/is (= 400 (status-code (str first-instance "/" layer-group "/0/a/0/0.grid.json")))))
+    (testing "Invalid layer group"
+      (test/is (= 400 (status-code (str first-instance "/xxxx" layer-group "xxx/0/a/0/0.grid.json")))))
+    (testing "Invalid format"
+      (test/is (= 400 (status-code (str first-instance "/" layer-group "/0/0/0/0.grid_invalid.json")))))))

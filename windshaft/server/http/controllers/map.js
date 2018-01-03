@@ -235,7 +235,7 @@ MapController.prototype.finalizeGetTileOrGrid = function(err, req, res, tile, he
             errMsg = 'style'+matches[2]+': ' + matches[1];
         }
 
-        var statusCode = self._app.findStatusCode(err);
+        var statusCode = this._app.findStatusCode(err);
         statsd('tile', req, statusCode);
 
         this._app.sendError(res, { errors: ['' + errMsg] }, this._app.findStatusCode(err), 'TILE', err);
