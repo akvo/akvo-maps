@@ -104,7 +104,7 @@
                         "fs.realpath": {
                           "version": "1.0.0",
                           "from": "fs.realpath@>=1.0.0 <2.0.0",
-                          "resolved": "http://173.192.225.82:8080/f/fs.realpath/_attachments/fs.realpath-1.0.0.tgz"
+                          "resolved": "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
                         },
                         "inflight": {
                           "version": "1.0.6",
