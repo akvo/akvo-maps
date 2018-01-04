@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
+EXTRA_NODE_OPTS="${EXTRA_NODE_OPTS:-}"
+
 if [ $NODE_ENV = "development" ]; then
    echo "Starting in dev mode"
    npm install
-   nodemon ./server.js
-#   nodemon --inspect ./server.js
+   nodemon $EXTRA_NODE_OPTS ./server.js
 else
    echo "Starting in production mode"
-   node ./server.js
+   node $EXTRA_NODE_OPTS ./server.js
 fi
