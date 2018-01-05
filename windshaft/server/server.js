@@ -9,37 +9,39 @@ var PORT = 4000;
 
 global.environment  = require('/config/environment.js');
 
+temporal_global = merge(default_environment, global.environment);
+
 just_global_properties = {
     redis: {
-        idleTimeoutMillis: global.environment.global_cache_ttl,
-        reapIntervalMillis: global.environment.global_reap_interval,
+        idleTimeoutMillis: temporal_global.global_cache_ttl,
+        reapIntervalMillis: temporal_global.global_reap_interval,
         emitter: {
-          statusInterval: global.environment.global_emit_stats_interval
+          statusInterval: temporal_global.global_emit_stats_interval
         }
     },
     renderer: {
         mapnik: {
-            statsInterval: global.environment.global_emit_stats_interval,
+            statsInterval: temporal_global.global_emit_stats_interval,
             metatileCache: {
-                ttl: global.environment.global_cache_ttl
+                ttl: temporal_global.global_cache_ttl
              },
             geojson: {
                dbPoolParams: {
-                  idleTimeout: global.environment.global_cache_ttl,
-                  reapInterval: global.environment.global_reap_interval
+                  idleTimeout: temporal_global.global_cache_ttl,
+                  reapInterval: temporal_global.global_reap_interval
                }
             }
         },
         torque: {
             dbPoolParams: {
-                idleTimeout: global.environment.global_cache_ttl,
-                reapInterval: global.environment.global_reap_interval
+                idleTimeout: temporal_global.global_cache_ttl,
+                reapInterval: temporal_global.global_reap_interval
             }
         }
     },
     renderCache: {
-        ttl: global.environment.global_cache_ttl,
-        statsInterval: global.environment.global_emit_stats_interval
+        ttl: temporal_global.global_cache_ttl,
+        statsInterval: temporal_global.global_emit_stats_interval
     }
 };
 
