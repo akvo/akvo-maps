@@ -87,7 +87,7 @@
                     "minimist": {
                       "version": "0.0.8",
                       "from": "minimist@0.0.8",
-                      "resolved": "https://npm-registry.whitewater.ibm.com/m/minimist/_attachments/minimist-0.0.8.tgz"
+                      "resolved": "https://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz"
                     }
                   }
                 },
