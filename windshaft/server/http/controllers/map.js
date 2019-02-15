@@ -131,11 +131,13 @@ MapController.prototype.create = function(req, res, prepareConfigFn) {
         },
         function saveDbCredentials(err, response, times) {
             assert.ifError(err);
-            callback = this;
-            self.dbCredentials.saveDbCredentials(response.layergroupid, db_credentials,
-                    function(err) {
-                        return callback(err, response, times);
-                    }
+            const callback = this;
+            self.dbCredentials.saveDbCredentials(
+                response.layergroupid,
+                db_credentials,
+                function(err) {
+                    return callback(err, response, times);
+                }
             );
         },
         function addLastModifiedTimestamp(err, response, times) {
