@@ -20,7 +20,7 @@
 
 (test/use-fixtures :once check-db-is-up)
 
-(def connection-pool (clj-http.conn-mgr/make-reusable-conn-manager {:timeout 20 :threads 8 :default-per-route 8}))
+(def connection-pool (clj-http.conn-mgr/make-reusable-conn-manager {:timeout 20 :threads 100 :default-per-route 100}))
 
 (def default-http-opts
   {:socket-timeout       10000
@@ -66,6 +66,12 @@
 
            (let [png (http/get (str first-instance "/" layer-group "/10/483/493.png") (dissoc default-http-opts :as))]
              (clojure.test/is (= 200 (:status png))))))
+
+
+(deftest concurrent-map-creation
+  (let [concurrent-requests (doall (for [i (range 10)]
+                                     (future (create-map i))))]
+    (is (every? (fn [request] (= 200 (:status @request))) concurrent-requests))))
 
 (deftest redis-caching-works
          (let [response (create-map (System/currentTimeMillis))
