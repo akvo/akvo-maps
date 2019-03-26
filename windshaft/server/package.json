@@ -13,7 +13,7 @@
         "mapnik": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
         "windshaft": "3.2.1",
         "express": "4.13.3",
-        "morgan": "1.7.0",
+        "morgan": "1.9.1",
         "body-parser": "1.14.0",
         "debug": "2.6.9",
         "redis-mpool": "0.4.1",
