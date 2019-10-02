@@ -1,4 +1,4 @@
-FROM ubuntu:xenial-20170802 as builder
+FROM ubuntu:xenial-20190904 as builder
 
 # Build env
 # Install required packages
@@ -43,7 +43,7 @@ RUN npm install -g nodemon && \
 
 # Execute environment
 
-FROM ubuntu:xenial-20170802
+FROM ubuntu:xenial-20190904
 
 RUN set -ex; apt-get update && \
     apt-get install -y --no-install-recommends \
