@@ -24,5 +24,5 @@ docker-compose -f docker-compose-ci.yml up -d --build
 docker-compose -f docker-compose-ci.yml run tests /tests/import-and-run.sh test
 rc=$?
 
-docker-compose -f docker-compose-ci.yml down
+docker-compose -f docker-compose-ci.yml down -v
 exit $rc

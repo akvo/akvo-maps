@@ -1,3 +1,4 @@
-FROM mdillon/postgis:9.6-alpine
+FROM akvo/akvo-lumen-db:20181023.8084497
 
-ADD ./provision /docker-entrypoint-initdb.d/
+COPY ./provision/helpers/* /docker-entrypoint-initdb.d/helpers/
+COPY ./provision/setup.sh /docker-entrypoint-initdb.d/999-setup.sh
