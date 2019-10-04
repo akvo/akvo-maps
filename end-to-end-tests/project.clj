@@ -10,5 +10,4 @@
                  [org.clojure/java.jdbc "0.5.8"]
                  [listora/again "0.1.0"]]
   :repl-options {:host    "0.0.0.0"
-                 :port    47480}
-  :profiles {:repl {:plugins [[cider/cider-nrepl "0.21.1"]]}})
+                 :port    47480})
