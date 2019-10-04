@@ -5,6 +5,7 @@ set -euo pipefail
 cmd="${1:-unknown}"
 cert_file="/pg-certs/server.crt"
 
+# Attribution: https://superuser.com/a/917073
 wait_file() {
     local file="$1"; shift
     local wait_seconds="${1:-10}"; shift # 10 seconds as default timeout
@@ -21,7 +22,7 @@ wait_file "${cert_file}" 45 || {
     exit 1
 }
 
-keytool -import -trustcacerts -keystore /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/cacerts -storepass changeit -noprompt -alias postgrescert -file "${cert_file}"
+keytool -import -trustcacerts -cacerts -storepass changeit -noprompt -alias postgrescert -file "${cert_file}"
 
 if [[ "${cmd}" == "test" ]]; then
     lein test
