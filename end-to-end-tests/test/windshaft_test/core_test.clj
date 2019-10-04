@@ -12,7 +12,7 @@
   (again/with-retries
     (again/max-duration 60000 (again/constant-strategy 1000))
     (if (not= 1 (count (jdbc/with-db-connection
-                         [conn {:connection-uri "jdbc:postgresql://postgres/test_database?user=anybody&password=password&ssl=true"}]
+                         [conn {:connection-uri "jdbc:postgresql://postgres/test_database?user=anybody&password=password&ssl=true&sslrootcert=/pg-certs/server.crt"}]
                          (jdbc/query conn
                                      ["select * from spatial_ref_sys LIMIT 1;"]))))
       (throw (RuntimeException. "Postgres not ready"))))

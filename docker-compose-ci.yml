@@ -30,7 +30,7 @@ services:
    depends_on:
      - postgres
  tests:
-   image: clojure:lein-2.7.1
+   image: clojure:openjdk-11-lein-2.9.1
    volumes:
       - ./end-to-end-tests:/tests
       - ~/.m2:/root/.m2
