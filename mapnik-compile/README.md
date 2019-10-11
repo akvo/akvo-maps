@@ -1,39 +1,62 @@
-This is a Docker image that is able to compile [node-mapnik](https://github.com/mapnik/node-mapnik/) >= 3.6 
-with a SSL enabled Postgres client library (libpq).
+We need to compile our own version because the upstream versions of
+[mapnik](https://github.com/CartoDB/mapnik) and
+[node-mapnik](https://github.com/CartoDB/node-mapnik) doesn't have SSL
+support in the `libpq` library.
 
-It does so by first compiling libpq with *--with-openssl*, then mapnik against it and finally node-mapnik.
- 
-We are patching the node-mapnik build process and packaging the result manually, so the process is expected to break
-with future versions of node-mapnik. See *build-mapnik.sh* 
+The build tool for this is [mason](https://github.com/CartoDB/mason/)
+with package _recipies_ for several C/C++ libraries and programs.
 
-node-mapnik pre 3.6 did not use [mason](https://github.com/mapbox/mason) to manage dependencies, so the patching that 
-we are doing does not work on those versions. 
+As of this writing we're building the following versions:
 
-It happens that the Windshaft version that we are using depends on node-mapnik 3.5, but testing against the 3.6 version 
-that we produce seems to work. 
+* node-mapnik: v3.6.2-carto.16
+* mapnik: v3.0.15.17 (v3.0.15 of upstream with some patches from CartoDB)
 
-Note that node-mapnik 3.5 depends on mapnik 3.0.12 while node-mapnik 3.6 depends on 3.0.15, so the underlying library
-has not changed that much.
 
 ## Build
 
-Run the *create.sh* script. This will generate the package and copy it to your local folder. 
+In order to build and test we setup an environment with PostGIS SSL required.
+Then we build the components and test a connection to PostGIS.
 
-## Updating node-mapnik version
+    docker-compose up -d
 
-1. Change git checkout on Dockerfile to the desired version
-1. Change the *create.sh* cp command
-1. Upload the mapnik-*-tar.gz to S3. We are using /akvoflow/npm. Make sure the file is public.
-1. Update npm shrinkwrap
-    1. Update *windshaft/server/package.json* with the new S3 url
-    1. Start the dev environment. The Windshaft processes will probably crash. Don't worry.
-    1. *docker exec -i -t akvomaps_windshaft2_1 /bin/bash*
-   ```
-    cd /tiler
-    rm -rf /tiler/node_modules/*
-    rm -rf /tiler/npm-shrinkwrap.json
-    npm install
-    npm shrinkwrap
-    ```
-    1. Stop env
-1. In the generated npm-shrinkwrap.json, override any dependency to mapnik to our S3 url. See the diff to know how.
+
+This will start a _system_ with 2 containers. The `windshaft`
+container is not doing anything just waiting. We execute `bash` and
+run the compilation inside the container.
+
+
+	docker-compose exec windshaft bash
+	/windshaft# . mapnik-ssl-enabled.sh | tee "$(date +%s).log"
+
+This will install the necessary dependencies, pull all the
+repositories and recompile `mapnik` and `node-mapnik` with `libpq` and
+SSL enabled.
+
+A full compilation log is produced in your just machine
+`<timestamp>.log`
+
+## Test
+
+There is a test in the test-suite of `node-mapnik` with a postgis
+datasource definition that we can reuse.
+
+Inside the `windshaft` container
+
+    /windshaft# cp test-ssl.js node-mapnik/test
+	/windshaft# cd node-mapnik
+	/windshaft# patch -p1 < ../datasource.patch
+	/windshaft# export NVM_DIR=/usr/local/nvm
+	/windshaft# . $NVM_DIR/nvm.sh
+	/windshaft# node test/test-ssl.js
+	/windshaft# echo $?
+
+The result of `echo $?` should be `0` (successful).
+
+## Upload to S3
+
+The resulting package is a compressed archive `tar.gz` located at
+
+    node-mapnik/build/stage/mapnik/v3.6.2-carto.16/node-v64-linux-x64-Release.tar.gz
+
+You can grab this archive and upload it to S3 into the `akvoflow`
+bucket in the `npm` folder.

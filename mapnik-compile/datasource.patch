@@ -1,0 +1,17 @@
+diff --git a/test/data/postgis_datasource_bool_query.xml b/test/data/postgis_datasource_bool_query.xml
+index cfc7f61..a5aec3e 100644
+--- a/test/data/postgis_datasource_bool_query.xml
++++ b/test/data/postgis_datasource_bool_query.xml
+@@ -3,8 +3,10 @@
+   <Layer name="field_shapes" status="on" srs="+init=epsg:4326">
+     <Datasource>
+       <Parameter name="type">postgis</Parameter>
+-      <Parameter name="host">localhost</Parameter>
+-      <Parameter name="dbname">node-mapnik-tmp-postgis-test-db</Parameter>
++      <Parameter name="host">postgres</Parameter>
++      <Parameter name="dbname">lumen</Parameter>
++      <Parameter name="user">postgres</Parameter>
++      <Parameter name="password">akvo</Parameter>
+       <Parameter name="srid">4326</Parameter>
+       <Parameter name="geometry_field">the_geom</Parameter>
+       <Parameter name="table">
