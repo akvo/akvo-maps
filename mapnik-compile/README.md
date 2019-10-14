@@ -26,7 +26,7 @@ run the compilation inside the container.
 
 
 	docker-compose exec windshaft bash
-	/windshaft# . mapnik-ssl-enabled.sh | tee "$(date +%s).log"
+	. mapnik-ssl-enabled.sh | tee "$(date +%s).log"
 
 This will install the necessary dependencies, pull all the
 repositories and recompile `mapnik` and `node-mapnik` with `libpq` and
@@ -42,13 +42,13 @@ datasource definition that we can reuse.
 
 Inside the `windshaft` container
 
-    /windshaft# cp test-ssl.js node-mapnik/test
-	/windshaft# cd node-mapnik
-	/windshaft# patch -p1 < ../datasource.patch
-	/windshaft# export NVM_DIR=/usr/local/nvm
-	/windshaft# . $NVM_DIR/nvm.sh
-	/windshaft# node test/test-ssl.js
-	/windshaft# echo $?
+    cp test-ssl.js node-mapnik/test
+	cd node-mapnik
+	patch -p1 < ../datasource.patch
+	export NVM_DIR=/usr/local/nvm
+	. $NVM_DIR/nvm.sh
+	node test/test-ssl.js
+	echo $?
 
 The result of `echo $?` should be `0` (successful).
 
