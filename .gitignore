@@ -5,6 +5,8 @@ bundle.js
 npm-debug.log
 .DS_Store
 
+mapnik-compile/node-mapnik/
+
 # CI
 ci/dev/deployment.yaml
 ci/prod/deployment.yaml

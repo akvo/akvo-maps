@@ -1,0 +1,22 @@
+version: "3"
+services:
+  postgres:
+    image: akvo/akvo-lumen-db:20181023.8084497
+    environment:
+      - POSTGRES_PASSWORD=akvo
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+  windshaft:
+    image: ubuntu:bionic-20190912.1
+    environment:
+         - PGSSLROOTCERT=/pg-certs/server.crt
+         - PGSSLCERT=/pg-certs/server.crt
+         - PGSSLKEY=/pg-certs/server.key
+         - PGSSLMODE=require
+    command: tail -f /dev/null
+    volumes:
+      - pg-data:/pg-certs:ro
+      - ./:/windshaft
+    working_dir: /windshaft
+volumes:
+  pg-data:
