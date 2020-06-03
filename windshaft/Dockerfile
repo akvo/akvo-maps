@@ -4,7 +4,7 @@ FROM ubuntu:xenial-20190904 as builder
 # Install required packages
 
 RUN set -ex; apt-get update && \
-    apt-get install --no-install-recommends -yq \
+    apt-get install -yq \
     locales \
     build-essential \
     git \
