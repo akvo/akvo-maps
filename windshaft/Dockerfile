@@ -4,7 +4,7 @@ FROM ubuntu:xenial-20190904 as builder
 # Install required packages
 
 RUN set -ex; apt-get update && \
-    apt-get install -yq \
+    apt-get install --no-install-recommends -yq \
     locales \
     build-essential \
     git \
@@ -80,4 +80,4 @@ COPY server /tiler
 
 RUN chmod u+x ./run.sh
 
-CMD ./run.sh
+CMD ["./run.sh"]
