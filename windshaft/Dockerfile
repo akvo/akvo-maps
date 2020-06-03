@@ -46,7 +46,7 @@ RUN npm install -g nodemon && \
 FROM ubuntu:xenial-20190904
 
 RUN set -ex; apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y \
     locales \
     libcairo2-dev \
     libjpeg-dev \
