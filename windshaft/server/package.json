@@ -12,7 +12,7 @@
     "dependencies": {
         "mapnik": "https://s3-eu-west-1.amazonaws.com/akvoflow/npm/mapnik-3.6.2-linux-x64.tgz",
         "windshaft": "3.2.1",
-        "express": "4.13.3",
+        "express": "4.19.2",
         "morgan": "1.9.1",
         "body-parser": "1.14.0",
         "debug": "2.6.9",
